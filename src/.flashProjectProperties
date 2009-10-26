@@ -1,0 +1,31 @@
+<projectDescription>
+  <id>1250335906375</id>
+  <name>GEXFExplorer</name>
+  <asVersion>0</asVersion>
+  <boundTemplate>file:///C|/Documents and Settings/Jacko/Local Settings/Application Data/Adobe/Flash CS4/fr/Configuration/Project/templates/boundClass_as3.as</boundTemplate>
+  <classTemplate>file:///C|/Documents and Settings/Jacko/Local Settings/Application Data/Adobe/Flash CS4/fr/Configuration/Project/templates/standardClass_as3.as</classTemplate>
+  <classPath>.</classPath>
+  <defaultApp>file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/testGEXFExplorer.fla</defaultApp>
+  <rootURI>file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/</rootURI>
+  <flexSDK/>
+  <sources editable="false"/>
+  <libraries editable="false"/>
+  <externalLibraries editable="false"/>
+  <compileList editable="false"/>
+  <recentFiles editable="false">
+    <uri label="GEXFLoader.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/loading/GEXFLoader.as</uri>
+    <uri label="Node.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Node.as</uri>
+    <uri label="Main.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/Main.as</uri>
+    <uri label="Quadtree.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/visualization/Quadtree.as</uri>
+    <uri label="GEXFExplorer.fla">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/GEXFExplorer.fla</uri>
+    <uri label="Edge.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Edge.as</uri>
+    <uri label="PlotGraph.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/visualization/PlotGraph.as</uri>
+    <uri label="OptionsWindow.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/OptionsWindow.as</uri>
+    <uri label="Quad.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Quad.as</uri>
+    <uri label="Graph.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Graph.as</uri>
+    <uri label="PlotWindow.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/PlotWindow.as</uri>
+    <uri label="FullScreenButton.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/FullScreenButton.as</uri>
+    <uri label="InputFormatTextField.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/text/InputFormatTextField.as</uri>
+  </recentFiles>
+  <locations editable="false"/>
+</projectDescription>
