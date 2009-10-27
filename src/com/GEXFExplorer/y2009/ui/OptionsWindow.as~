@@ -190,7 +190,7 @@ package com.GEXFExplorer.y2009.ui {
 		}
 		
 		protected function onClickTitle(evt:MouseEvent){
-			var tempURL:URLRequest = new URLRequest("http://github.com/jacomyal/GexfExplorer");
+			var tempURL:URLRequest = new URLRequest("http://gephi.org/community/gexfexplorer");
 			navigateToURL(tempURL);
 		}
 		

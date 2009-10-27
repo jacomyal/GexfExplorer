@@ -1,0 +1,41 @@
+-- GexfExplorer 1.0 --
+@author: Alexis Jacomy <alexis.jacomy@gmail.com>
+
+---
+
+I. INTRODUCTION
+
+This open-source free web widget allows webmasters to offer to the user a simple interface to explore your own graphs. To do this, you first have to export your graph in gexf format (www.gexf.com), and the best way is currently Gephi (www.gephi.org), a free software to visualize graphs.
+When it's done, the next step is as simple: You must download 'bin/GexfExplorer1.0.swf' (available on www.github.com/jacomyal/GexfExplorer), put it and your gexf-encoded graph somewhere locally in your server, and write the following lines in your html code to use it:
+
+<object width="[your_width_value]" height="[your_height_value]">
+	<param name="movie" value="[your_local_GexfExplorer_path]?path=[your_local_graph_path]&[variable1_name]=[variable1_value]" />
+	<param name="allowFullScreen" value="true" />
+	<param name="allowScriptAccess" value="always" />
+	<param name="bgcolor" value="#[your_hexa_backgroundcolor]" />
+	<embed src="[your_local_GexfExplorer_path]?path=[your_local_graph_path]&[variable1_name]=[variable1_value]" allowfullscreen="true" allowScriptAccess="always" width="[your_width_value]" height="[your_height_value]" bgcolor="#[your_hexa_backgroundcolor]">
+	</embed>
+</object>
+
+
+II. LIST OF CURRENTLY EXISTING PARAMETERS
+
+ - curvedEdges: 'true': edges are clockwise curved; 'false': edges are linear, colored as the source node.
+ - clickableNodes: If your label are URLs, you can make it 'true', and clicking on a node opens tue URL in a new tab.
+ - labelsColor: Adobe hexadecimal color: 0x[your_hexa_label_color] (Example: Black = 0x000000, White = 0xFFFFFF, ...).
+ - font: The font of your label ('Arial', 'Verdana', ...)
+ - edgesThickness: The integer thickness of your edges.
+ - Others parameters will be available soon...
+
+ 
+III. COMPLETE EXAMPLE
+
+Download 'bin/*' in a folder, and launch in your web browser 'bin/test.html'. Then, you'll have a simple demo of this widget, with the following html code:
+<object width="550" height="400">
+	<param name="movie" value="GexfExplorer1.0.swf?path=./test.gexf&curvedEdges=true&clickableNodes&clickableNodes=true&labelsColor=0x454545&font=Verdana" />
+	<param name="allowFullScreen" value="true" />
+	<param name="allowScriptAccess" value="always" />
+	<param name="bgcolor" value="#000000" />
+	<embed src="GexfExplorer1.0.swf?path=./test.gexf&curvedEdges=true&clickableNodes=true&labelsColor=0x454545&font=Verdana" allowfullscreen="true" allowScriptAccess="always" width="550" height="400" bgcolor="#000000">
+	</embed>
+</object>

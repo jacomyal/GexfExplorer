@@ -5,7 +5,7 @@
   <boundTemplate>file:///C|/Documents and Settings/Jacko/Local Settings/Application Data/Adobe/Flash CS4/fr/Configuration/Project/templates/boundClass_as3.as</boundTemplate>
   <classTemplate>file:///C|/Documents and Settings/Jacko/Local Settings/Application Data/Adobe/Flash CS4/fr/Configuration/Project/templates/standardClass_as3.as</classTemplate>
   <classPath>.</classPath>
-  <defaultApp>file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/testGEXFExplorer.fla</defaultApp>
+  <defaultApp>file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/GEXFExplorer.fla</defaultApp>
   <rootURI>file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/</rootURI>
   <flexSDK/>
   <sources editable="false"/>
@@ -13,6 +13,7 @@
   <externalLibraries editable="false"/>
   <compileList editable="false"/>
   <recentFiles editable="false">
+    <uri label="OptionsWindow.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/OptionsWindow.as</uri>
     <uri label="GEXFLoader.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/loading/GEXFLoader.as</uri>
     <uri label="Node.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Node.as</uri>
     <uri label="Main.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/Main.as</uri>
@@ -20,7 +21,6 @@
     <uri label="GEXFExplorer.fla">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/GEXFExplorer.fla</uri>
     <uri label="Edge.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Edge.as</uri>
     <uri label="PlotGraph.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/visualization/PlotGraph.as</uri>
-    <uri label="OptionsWindow.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/OptionsWindow.as</uri>
     <uri label="Quad.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Quad.as</uri>
     <uri label="Graph.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Graph.as</uri>
     <uri label="PlotWindow.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/PlotWindow.as</uri>
