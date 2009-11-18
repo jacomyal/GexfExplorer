@@ -25,27 +25,35 @@ package com.GEXFExplorer.y2009.data {
 	import flash.display.Sprite;
 	
 	/**
-	* Classe qui modifie les coordonnées dans le QuadTree en carré graphique.
-	* 
-	* Chaque carré (QuadtreeSquare) contient graphiquement tous les noeuds qui sont
-	* situés dessus.
-	* 
-	* @author Alexis Jacomy
-	*/
+	  * Represents leaf nodes of the quadtree.
+	  * Each quad corresponds to coordinates in the tree as well as to a rectangle on screen.
+	  * This rectangle is proportional to the screen, with pow(2,-quadtree.depth) as ratio.
+	  * Each node contains graphically some nodes, to simplify Flash graphic elements management.
+	  * 
+	  * @author Alexis Jacomy <alexis.jacomy@gmail.com>
+	  * @langversion ActionScript 3.0
+	  * @playerversion Flash 10
+	  * @see com.GEXFExplorer.y2009.visualization.Quadtree
+	  */
 	public class Quad {
 		
-		public var quadPosition:Array;
-		public var nodesArray:Array;
+		private var position:Array;
+		private var nodesArray:Array;
 		
 		public var edgesContainer:Sprite;
 		public var nodesContainer:Sprite;
 		public var textsContainer:Sprite;
 		public var hitAreasContainer:Sprite;
-		
-		public function Quad(newQuadPosition:Array) {
-			trace("QuadtreeSquare:QuadtreeSquare()");
-			
-			quadPosition = newQuadPosition;
+	
+		/**
+		  * Represents each node from the file in the memory.
+		  * 
+		  * @author Alexis Jacomy <alexis.jacomy@gmail.com>
+		  * @see com.GEXFExplorer.y2009.data.Edge
+		  * @see com.GEXFExplorer.y2009.data.Graph
+		  */
+		public function Quad(newPosition:Array) {
+			position = newPosition;
 			nodesArray = new Array();
 			
 			edgesContainer = new Sprite();
@@ -54,6 +62,32 @@ package com.GEXFExplorer.y2009.data {
 			hitAreasContainer = new Sprite();
 		}
 		
+		/**
+		  * Returns this quad position in the quadtree.
+		  * 
+		  * @return nodesList
+		  * @see com.GEXFExplorer.y2009.data.Node
+		  */
+		public function get positionAccess(){
+			return position;
+		}
+		
+		/**
+		  * Returns nodes list from this quad.
+		  * 
+		  * @return nodesArray
+		  * @see com.GEXFExplorer.y2009.data.Node
+		  */
+		public function get nodesArrayAccess(){
+			return nodesArray;
+		}
+		
+		/**
+		  * Pushes a node (parameter) in nodesArray.
+		  * 
+		  * @param tempNode Node to push in the array.
+		  * @see com.GEXFExplorer.y2009.data.Node
+		  */
 		public function push(tempNode:Node){
 			nodesArray.push(tempNode);
 		}

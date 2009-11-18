@@ -28,60 +28,107 @@ package com.GEXFExplorer.y2009.visualization{
 	import flash.display.Stage;
 	
 	/**
-	* Classe Quadtree de base. Elle permet de mettre en place le Quadtree.
-	* 
-	* Pour manipuler les coordonnées dans l'arbre, j'utilise un array qui
-	* contient un array des positions consécutives du point dans l'arbre
-	* suivant x, puis le même pour y.
-	* En particulier, elle contient la liste de toutes les zones non vides
-	* à la profondeur depth.
-	* 
-	* @author Alexis Jacomy
-	*/
+	  * The Quadtree is used to reduce the number of graphic elements, and so to increase graphic performances.
+	  * For the moment, I do not implement a reel quadtree, because the root can have more than 4 sons...
+	  * 
+	  * @author Alexis Jacomy <alexis.jacomy@gmail.com>
+	  * @langversion ActionScript 3.0
+	  * @playerversion Flash 10
+	  * @see http://en.wikipedia.org/wiki/Quadtree
+	  * @see com.GEXFExplorer.y2009.data.Quad
+	  */
 	public class Quadtree{
 		
-		public var plotGraph:PlotGraph;
-		public var nodesVector:Vector.<Node>;
-		public var fullAreasArray:Array;
-		public var quadtreeViz:Sprite;
+		private var visualGraph:VisualGraph;
+		private var nodesVector:Vector.<Node>;
+		private var fullAreasArray:Array;
+		private var quadtreeViz:Sprite;
 		
+		private var normalWidth:Number;
+		private var normalHeight:Number;
 		private var depth:int;
 	
-		
 		/**
-		 * Crée une instance de Quadtree, et initialise les variables.
-		 * 
-		 * @param newDepth Profondeur de l'arbre
-		 * @param newDegreeX Numbre de fils sur x par père
-		 * @param newDegreeY Numbre de fils sur y par père
-		 */		
-		public function Quadtree(newDepth:int,pGraph:PlotGraph){
+		  * Initializes Quadtree attributes and plot the graph, quad by quad.
+		  * 
+		  * @param newDepth New depth of this quadtree.
+		  * @param pGraph The global visual graph.
+		  */
+		public function Quadtree(newDepth:int,pGraph:VisualGraph){
 			depth = newDepth;
-			plotGraph = pGraph;
+			visualGraph = pGraph;
 			quadtreeViz = new Sprite();
-			plotGraph.addChild(quadtreeViz);
+			visualGraph.addChild(quadtreeViz);
 			fullAreasArray = new Array();
 		}
-	
+		
 		/**
-		 * Actualise les EventListeners.
-		 */
+		  * Returns the quad list.
+		  * 
+		  * @return The quads list.
+		  * @see com.GEXFExplorer.y2009.data.Quad
+		  */
+		public function getQuadsArray(){
+			return fullAreasArray;
+		}
+		
+		/**
+		  * Actualizes the nodesVector valuea and launches setFullAreasArray().
+		  * 
+		  * @see #setFullAreasArray
+		  */
 		public function actualize(){
-			trace("Quadtree:actualize()");
-			
-			nodesVector = plotGraph.globalGraph.getNodes();
+			nodesVector = visualGraph.getNodes();
 			setFullAreasArray();
 		}
-	
+		
 		/**
-		 * Renvoie les coordonnées dans le Quadtree du point en (xVar,yVar), sous la forme:
-		 * ((liste des positions à chaque étage de l'arbre suivant x),(pareil en y))
-		 * 
-		 * @param xVar Position du point paramètre en x
-		 * @param yVar Position du point paramètre en y
-		 */		
-		public function getArrayCoordinates(xVar:Number,yVar:Number):Array{
-			trace("Quadtree:getArrayCoordinates("+xVar+","+yVar+"):");
+		  * Tests the intersection between a quad and the screen.
+		  * 
+		  * @param arrayVar The quad position in the tree
+		  * @return 1 if the intersection isn't null, else 0.
+		  */
+		public function isOnScreen(arrayVar:Array):Boolean{
+			
+			var resultBool:Boolean = true;
+			var i:Number = 0;
+			var tempTopLeft_x:Number = 0;
+			var tempTopLeft_y:Number = 0;
+			var tempScreenWidth:Number = visualGraph.stage.stageWidth;
+			var tempScreenHeight:Number = visualGraph.stage.stageHeight;
+			var tempPowIx:Number = normalWidth;
+			var tempPowIy:Number = normalHeight;
+			
+			while((resultBool==true)&&(i<depth)){
+				
+				tempPowIx = tempPowIx/2;
+				tempPowIy = tempPowIy/2;
+				
+				tempTopLeft_x += tempPowIx*arrayVar[0][i];
+				tempTopLeft_y += tempPowIy*arrayVar[1][i];
+				
+				if((tempTopLeft_x+visualGraph.x>tempScreenWidth)||
+				   (tempTopLeft_x+tempPowIx+visualGraph.x<0)||
+				   (tempTopLeft_y+visualGraph.y>tempScreenHeight)||
+				   (tempTopLeft_y+tempPowIy+visualGraph.y<0))
+				{
+					resultBool = false;
+					return(resultBool);
+				}
+				i++;
+			}
+			
+			return(resultBool);
+		}
+		
+		/**
+		  * Returns the coordinates of the quad containing the (xVar,yVar) point.
+		  * 
+		  * @param xVar x position of the tested point
+		  * @param yVar y position of the tested point
+		  * @return The quad position in the tree.
+		  */
+		protected function getArrayCoordinates(xVar:Number,yVar:Number):Array{
 			
 			var i:Number = 0;
 			var tempTopLeft_x:Number = 0;
@@ -90,12 +137,8 @@ package com.GEXFExplorer.y2009.visualization{
 			var tempPowIy:Number;
 			var tempArrayX:Array = new Array();
 			var tempArrayY:Array = new Array();
-			var tempWidth:Number = plotGraph.stage.stageWidth;
-			var tempHeight:Number = plotGraph.stage.stageHeight;
-			
-			var goodXVar:Number = (xVar+plotGraph.x)*plotGraph.ratio;
-			var goodYVar:Number = (yVar+plotGraph.y)*plotGraph.ratio;
-			trace("\tGood coordinates: x: "+goodXVar+", y: "+goodYVar);
+			var tempWidth:Number = visualGraph.stage.stageWidth;
+			var tempHeight:Number = visualGraph.stage.stageHeight;
 			
 			var tempXCase:Number;
 			var tempYCase:Number;
@@ -109,8 +152,8 @@ package com.GEXFExplorer.y2009.visualization{
 				tempPowIx = tempWidth/Math.pow(2,i+1);
 				tempPowIy = tempHeight/Math.pow(2,i+1);
 				
-				tempXCase = Math.floor((goodXVar-tempTopLeft_x)/tempPowIx);
-				tempYCase = Math.floor((goodYVar-tempTopLeft_y)/tempPowIy);
+				tempXCase = Math.floor((xVar-tempTopLeft_x)/tempPowIx);
+				tempYCase = Math.floor((yVar-tempTopLeft_y)/tempPowIy);
 				
 				tempTopLeft_x += tempPowIx*tempXCase;
 				tempTopLeft_y += tempPowIy*tempYCase;
@@ -122,60 +165,20 @@ package com.GEXFExplorer.y2009.visualization{
 			resultArray.push(xArray);
 			resultArray.push(yArray);
 			
-			trace(resultArray);
 			return(resultArray);
 			
 			tempSprite.graphics.endFill();
 		}
-	
+		
 		/**
-		 * Renvoie une valeur booléenne qui indique si le noeud de l'arbre
-		 * passé en paramètre est à l'écran ou pas.
-		 * 
-		 * @param arrayVar Liste des positions consécutives dans l'arbre
-		 */		
-		public function isOnScreen(arrayVar:Array):Boolean{
+		  * Sets the quad list, by testing for each node where is his quad.
+		  * 
+		  * @see com.GEXFExplorer.y2009.data.Quad
+		  */
+		protected function setFullAreasArray():void{
+			normalWidth = visualGraph.stage.stageWidth;
+			normalHeight = visualGraph.stage.stageHeight;
 			
-			var resultBool:Boolean = true;
-			var i:Number = 0;
-			var tempTopLeft_x:Number = 0;
-			var tempTopLeft_y:Number = 0;
-			var tempWidth:Number = plotGraph.width;
-			var tempHeight:Number = plotGraph.height;
-			var tempScreenWidth:Number = plotGraph.stage.stageWidth;
-			var tempScreenHeight:Number = plotGraph.stage.stageHeight;
-			var tempPowIx:Number = tempWidth;
-			var tempPowIy:Number = tempHeight;
-			
-			while((resultBool==true)&&(i<depth)){
-				
-				tempPowIx = tempPowIx/2;
-				tempPowIy = tempPowIy/2;
-				
-				tempTopLeft_x += tempPowIx*arrayVar[0][i];
-				tempTopLeft_y += tempPowIy*arrayVar[1][i];
-				
-				if(((tempTopLeft_x-plotGraph.x)/plotGraph.scaleX>=plotGraph.x+tempScreenWidth)||
-				   ((tempTopLeft_x+tempPowIx-plotGraph.x)/plotGraph.scaleX<=plotGraph.x)||
-				   ((tempTopLeft_y-plotGraph.y)/plotGraph.scaleY>=plotGraph.y+tempScreenHeight)||
-				   ((tempTopLeft_y+tempPowIy-plotGraph.y)/plotGraph.scaleY<=plotGraph.y))
-				{
-					resultBool = false;
-					return(resultBool);
-				}
-				i++;
-			}
-			
-			trace("QuadTree:isOnScreen:");
-			trace("\tSquare in.");
-			return(resultBool);
-		}
-	
-		/**
-		 * Détermine les zones de la scène non vides.
-		 */		
-		public function setFullAreasArray():void{
-			trace("Quadtree:setFullAreasArray()");
 			var tempIndex:Number;
 			var tempNode:Node;
 			var tempCoordinatesArray:Array;
@@ -184,7 +187,6 @@ package com.GEXFExplorer.y2009.visualization{
 			var tempQuadArray:Array = new Array();
 			
 			for each(tempNode in nodesVector){
-				trace("Node n°"+tempNode.id);
 				tempCoordinatesArray = getArrayCoordinates(tempNode.x,tempNode.y);
 				tempIndex = index(tempCoordinatesArray,tempQuadArray);
 				if(tempIndex==-1){
@@ -198,15 +200,13 @@ package com.GEXFExplorer.y2009.visualization{
 			
 			//traceAreas();
 		}
-	
+		
 		/**
-		 * Permet de tracer l'arborescence d'un noeud (chaque fils est tracé sous la forme
-		 * de son carré). La transparence permet d'interpréter le dessin des carrés comme une
-		 * sorte de densité en sommet (du graphe) du plan.
-		 * 
-		 * @param arrayVar Position dans l'arbre du noeud à afficher
-		 */		
-		public function drawQuadFromArray(arrayVar:Array):void{
+		  * Plots a rectangle around a quad from his position in the tree.
+		  * 
+		  * @param arrayVar The quad position in the tree.
+		  */
+		protected function drawQuadFromArray(arrayVar:Array):void{
 			var i:Number = 0;
 			var tempTopLeft_x:Number = 0;
 			var tempTopLeft_y:Number = 0;
@@ -225,69 +225,67 @@ package com.GEXFExplorer.y2009.visualization{
 				tempTopLeft_x += tempPowIx*arrayVar[0][i];
 				tempTopLeft_y += tempPowIy*arrayVar[1][i];
 				
-				quadtreeViz.graphics.beginFill(0xFFFFFF,0);
-				quadtreeViz.graphics.lineStyle(1,0xAAAAAA,0.5);
+				if(i==depth-1) quadtreeViz.graphics.beginFill(0x888888,0.1);
+				quadtreeViz.graphics.lineStyle(1,0xCCCCCC,1);
 				quadtreeViz.graphics.drawRect(tempTopLeft_x,tempTopLeft_y,tempPowIx,tempPowIy);
 				quadtreeViz.graphics.endFill();
 				
 				tempAlpha = (5*tempAlpha + 1)/6;
 			}
 		}
-	
+		
 		/**
-		 * Permet de trouver dans un array mutlidimmensionnel la position
-		 * d'un aure array, passé en premier paramètre.
-		 * 
-		 * @param array Tableau à comparer aux autres tableaux
-		 * @param arrayContainer Tableau contenant les autres tableaux
-		 */		
-		public function index(array:Array,arrayContainer:Array):Number{
+		  * Returns the index if an array in an array of arrays.
+		  * Functions like indexOf().
+		  * 
+		  * @param array The array to test in arrayContainer.
+		  * @param arrayContainer The array of arrays.
+		  * @return -1 if array is not in arrayContainer, else the index of array in arrayContainer.
+		  * @see com.GEXFExplorer.y2009.data.Quad
+		  */
+		protected function index(array:Array,arrayContainer:Array):Number{
 			
-			var a1:Array = new Array();
-			var a2:Array = new Array();
 			var i:Number;
 			var j:Number;
-			
-			for(i=0;i<array.length;i++){
-				a1.push(array[i]);
-			}
+			var res:Number = -1;
+			var ifOk:Boolean;
+			var d:Number = array[0].length;
 			
 			for(i=0;i<arrayContainer.length;i++){
-				a2.push(new Array());
-				for(j=0;j<arrayContainer[i].length;j++){
-					a2[i].push(arrayContainer[i][j]);
+				j=0;
+				ifOk = true;
+				
+				while(ifOk==true && j<d){
+					if(arrayContainer[i][0][j]!=array[0][j] || arrayContainer[i][1][j]!=array[1][j]){
+						ifOk=false;
+					}
+					
+					j++;
+				}
+				
+				if(ifOk==true){
+					res = i;
+					return(res);
 				}
 			}
-			
-			var s1:String = a1.sort().toString();
-			var s2:String;
-			
-			for(i=0;i<a2.length;i++){
-				s2=a2[i].sort().toString();
-				if(s2==s1){
-					return(i);
-				}
-			}
-			
-			return(-1);
+			return(res);
 		}
-	
+		
 		/**
-		 * Affiche en console la position de chaque zone et les ID de tous
-		 * les noeuds pour chacune des zones.
-		 */		
-		public function traceAreas():void{
+		  * Traces in the output the list of each quad, with the nodes it contains.
+		  */
+		protected function traceAreas():void{
 			var tempQuad:Quad;
 			var tempNode:Node;
 			var i:Number = 0;
 			
 			for each(tempQuad in fullAreasArray){
-				trace("Area n°"+i+":\n\tPosition in the tree:\n\t\ton x:("+tempQuad.quadPosition[0]+")\n\t\ton y:("+tempQuad.quadPosition[1]+")");
-				for each(tempNode in tempQuad.nodesArray){
-					trace("\tNode n°"+tempNode.id+", x: "+tempNode.x+", y: "+tempNode.y);
+				trace("Area n°"+i+":\n\tPosition in the tree:\n\t\ton x:("+tempQuad.positionAccess[0]+")\n\t\ton y:("+tempQuad.positionAccess[1]+")");
+				for each(tempNode in tempQuad.nodesArrayAccess){
+					trace("\tNode n°"+tempNode.idAccess+", x: "+tempNode.x+", y: "+tempNode.y);
 				}
 				
-				drawQuadFromArray(tempQuad.quadPosition);
+				drawQuadFromArray(tempQuad.positionAccess);
 				
 				i++;
 			}

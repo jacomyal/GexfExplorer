@@ -22,62 +22,89 @@
 
 package com.GEXFExplorer.y2009.ui {
 	
-	import flash.text.TextField;
 	import flash.events.Event;
-	import flash.events.TimerEvent;
+    import flash.text.TextField;
+    import flash.text.TextFieldAutoSize;
+    import flash.text.TextFormat;
+    import flash.text.TextFieldType;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import com.GEXFExplorer.y2009.data.Graph;
 	import com.GEXFExplorer.y2009.loading.GEXFLoader;
-	import com.GEXFExplorer.y2009.visualization.PlotGraph;
+	import com.GEXFExplorer.y2009.visualization.VisualGraph;
 	
+	
+	/**
+	  * Main class of this program.
+	  * It manages all stages from reading the file to drawing the graph.
+	  * 
+	  * @author Alexis Jacomy <alexis.jacomy@gmail.com>
+	  * @langversion ActionScript 3.0
+	  * @playerversion Flash 10
+	  */
 	public class Main extends Sprite{
 		
 		private var Gexf:GEXFLoader;
-		private var curvedEdges:Boolean;
-		private var clickableNodes:Boolean;
-		private var path:String;
-		private var font:String;
-		private var edgesThickness:Number;
-		private var labelsColor:uint;
 		
-		public var plotGraph:PlotGraph;
-		public var graph:Graph;
+		private var visualGraph:VisualGraph;
+		private var graph:Graph;
 		
+		/**
+		  * Initializes the instance.
+		  * 
+		  * @param s Scene stage
+		  */
 		public function Main(s:Stage) {
 			
 			s.addChild(this);
-			
-			path = root.loaderInfo.parameters["path"];
-			
-			if(root.loaderInfo.parameters["labelsColor"]==undefined){labelsColor = 0x000000;}
-			else{labelsColor = new uint(root.loaderInfo.parameters["labelsColor"]);}
-			
-			if(root.loaderInfo.parameters["font"]==undefined){font = "Arial";}
-			else{font = root.loaderInfo.parameters["font"];}
-			
-			if(root.loaderInfo.parameters["edgesThickness"]==undefined){edgesThickness = 1;}
-			else{edgesThickness = new Number(root.loaderInfo.parameters["edgesThickness"]);}
-			
-			if(root.loaderInfo.parameters["clickableNodes"]=="true"){clickableNodes = true;}
-			else{clickableNodes = false;}
-			
-			if(root.loaderInfo.parameters["curvedEdges"]=="true"){curvedEdges = true;}
-			else{curvedEdges = false;}
-			
 			graph = new Graph();
-			if(path==null){
-				Gexf = new GEXFLoader(graph,labelsColor,font,"C:/test.gexf");
-			} else {
-				Gexf = new GEXFLoader(graph,labelsColor,font,path);
-			}
+			
+			Gexf = new GEXFLoader(graph,stage);
 			Gexf.addEventListener(GEXFLoader.COMPLETE, onComplete);
 		}
 		
-		private function onComplete(evt:Event){
+		/**
+		  * Initiates the VisualGraph instance when datas are loaded into the memory.
+		  * 
+		  * @param evt GEXFLoader.COMPLETE
+		  * @see com.GEXFExplorer.y2009.visualization.VisualGraph
+		  */
+		protected function onComplete(evt:Event){
 			Gexf.removeEventListener(GEXFLoader.COMPLETE, onComplete);
+			Gexf.empty();
 			
-			plotGraph = new PlotGraph(graph,stage,edgesThickness,clickableNodes,curvedEdges);
+			var tempColor:uint;
+			
+			if(root.loaderInfo.parameters["titleColor"]!=undefined) tempColor = new uint(root.loaderInfo.parameters["titleColor"]);
+			else tempColor = 0x000000;
+			
+			if(graph.getTitle!=null){
+				var tTF:TextField = new TextField();
+				with(tTF){
+					x = 12;
+					y = 12;
+					text = graph.getTitle;
+					selectable = false;
+					autoSize = TextFieldAutoSize.LEFT;
+					setTextFormat(new TextFormat("Verdana",25,tempColor,true));
+				}
+				addChild(tTF);
+				
+				if(graph.getCreator!=null){
+					var cTF:TextField = new TextField();
+					with(cTF){
+						x = 12;
+						y = 35;
+						text = "by "+graph.getCreator;
+						selectable = false;
+						autoSize = TextFieldAutoSize.LEFT;
+						setTextFormat(new TextFormat("Verdana",20,tempColor,true));
+					}
+					addChild(cTF);
+				}
+			}
+			
+			visualGraph = new VisualGraph(graph,stage);
 		}
 	}
 	

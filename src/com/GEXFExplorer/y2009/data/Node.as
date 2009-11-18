@@ -23,6 +23,7 @@
 package com.GEXFExplorer.y2009.data{
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -33,45 +34,54 @@ package com.GEXFExplorer.y2009.data{
     import flash.net.navigateToURL;
 	
 	/**
-	 * Permet de stocker en mémoire les noeuds.
-	 *
-	 * @author Alexis Jacomy
-	 */
+	  * Represents each node from the file in the memory.
+	  * 
+	  * @author Alexis Jacomy <alexis.jacomy@gmail.com>
+	  * @langversion ActionScript 3.0
+	  * @playerversion Flash 10
+	  * @see com.GEXFExplorer.y2009.data.Edge
+	  * @see com.GEXFExplorer.y2009.data.Graph
+	  */
 	public class Node extends Sprite {
 		
-		public var id:Number;
-		public var regularId:Number;
+		public static const SELECT = "Node selected";
+		
 		public var labelText:TextField;
 		public var labelStyle:TextFormat;
-		
 		public var diameter:Number;
 		public var ratio:Number;
 		public var colorUInt:uint;
 		public var labelColorUInt:uint;
 		public var font:String;
-		
 		public var circleHitArea:Sprite;
-		public var onMouseOverNodeSprite:Sprite;
 		
+		private var id:Number;
 		private var label:String;
 		private var edgesListTo:Vector.<Edge>;
 		private var edgesListFrom:Vector.<Edge>;
+		private var attributes:HashMap;
 		
-		public function Node(newId:Number, newRegularId:Number, newLabel:String, newLabelColor:uint, newFont:String) {
+		/**
+		  * Initializes the node.
+		  * 
+		  * @param newId Node ID
+		  * @param newLabel Node label
+		  * @param newLabelColor Node label color
+		  * @param newFont Node label font
+		  */
+		public function Node(newId:Number, newLabel:String, newLabelColor:uint, newFont:String) {
 			
 			font = newFont;
 			labelStyle = new TextFormat(font);
 			labelColorUInt = newLabelColor;
 			
 			circleHitArea = new Sprite();
-			onMouseOverNodeSprite = new Sprite();
 			
 			edgesListTo = new Vector.<Edge>();
 			edgesListFrom = new Vector.<Edge>();
 			label = newLabel;
 			
 			id = newId;
-			regularId = newRegularId;
 			diameter = new Number();
 			ratio = 7.5;
 			
@@ -83,112 +93,165 @@ package com.GEXFExplorer.y2009.data{
 			labelText.autoSize = TextFieldAutoSize.CENTER;
 			labelText.text = label;
 			labelText.setTextFormat(labelStyle);
-			labelStyle.size = 1*diameter/3;
 			labelText.textColor = labelColorUInt;
 		}
-
+		
+		/**
+		  * Returns the node ID.
+		  * 
+		  * @return The node ID.
+		  */
 		public function get idAccess():Number {
 			return id;
 		}
 		
+		/**
+		  * Returns the node label.
+		  * 
+		  * @return The node label.
+		  */
 		public function get labelAccess():String {
 			return label;
 		}
 		
+		/**
+		  * Returns edges which are from this node.
+		  * 
+		  * @return edgesListFrom
+		  * @see com.GEXFExplorer.y2009.data.Edge
+		  */
 		public function getEdgesFrom():Vector.<Edge>{
 			return edgesListFrom;
 		}
 		
+		/**
+		  * Returns edges which move into this node.
+		  * 
+		  * @return edgesListTo
+		  * @see com.GEXFExplorer.y2009.data.Edge
+		  */
 		public function getEdgesTo():Vector.<Edge>{
 			return edgesListTo;
 		}
 		
+		/**
+		  * Returns this node attributes.
+		  * 
+		  * @return This node attributes hash tab
+		  */
+		public function getAttributes():HashMap{
+			return attributes;
+		}
+		
+		/**
+		  * Sets this node diameter.
+		  * 
+		  * @param d New diameter
+		  */
+		public function setDiameter(d:Number){
+			diameter = d;
+		}
+		
+		/**
+		  * Sets this node attributes.
+		  * 
+		  * @param o New attributes hash tab
+		  */
+		public function setAttributes(o:HashMap){
+			attributes = o;
+		}
+		
+		/**
+		  * Plots the node bigger than when mouse isn't over it.
+		  * 
+		  * @see #onMouseMoveOverNode
+		  */
+		public function plot():void{
+			this.graphics.clear();
+			this.graphics.beginFill(brightenColor(this.colorUInt,35),1);
+			this.graphics.drawCircle(0,0,this.diameter/2*this.ratio);
+			this.graphics.drawCircle(0,0,3.5*this.diameter/10*this.ratio);
+			this.graphics.beginFill(this.colorUInt,1);
+			this.graphics.drawCircle(0,0,2.75*this.diameter/10*this.ratio);
+		}
+		
+		/**
+		  * Plots the node lighter when it is selected.
+		  */
+		public function plotAsSelected():void{
+			this.graphics.clear();
+			this.graphics.beginFill(brightenColor(this.colorUInt,75),1);
+			this.graphics.drawCircle(0,0,this.diameter/2*this.ratio);
+			this.graphics.drawCircle(0,0,3.2*this.diameter/10*this.ratio);
+			this.graphics.beginFill(brightenColor(this.colorUInt,85),1);
+			this.graphics.drawCircle(0,0,2.75*this.diameter/10*this.ratio);
+		}
+		
+		/**
+		  * Select this node.
+		  */
+		public function select():void{
+			this.graphics.clear();
+			
+			this.circleHitArea.removeEventListener(MouseEvent.MOUSE_OVER,onMouseMoveOverNode);
+			this.circleHitArea.removeEventListener(MouseEvent.MOUSE_OUT,onMouseMoveOutNode);
+			this.circleHitArea.addEventListener(MouseEvent.MOUSE_OVER,onMouseMoveOverNodeSelected);
+			this.circleHitArea.addEventListener(MouseEvent.MOUSE_OUT,onMouseMoveOutNodeSelected);
+			
+			onMouseMoveOutNode(null);
+			onMouseMoveOverNodeSelected(null);
+		}
+		
+		/**
+		  * Unselect this node.
+		  */
+		public function unselect():void{
+			this.plot();
+			
+			this.circleHitArea.removeEventListener(MouseEvent.MOUSE_OVER,onMouseMoveOverNodeSelected);
+			this.circleHitArea.removeEventListener(MouseEvent.MOUSE_OUT,onMouseMoveOutNodeSelected);
+			this.circleHitArea.addEventListener(MouseEvent.MOUSE_OVER,onMouseMoveOverNode);
+			this.circleHitArea.addEventListener(MouseEvent.MOUSE_OUT,onMouseMoveOutNode);
+		}
+		
+		/**
+		  * Adds an edge in <code>edgesListFrom</code>.
+		  * 
+		  * @param newEdge Edge to add.
+		  */
 		public function addEdgeFrom(newEdge:Edge):void {
 			edgesListFrom.push(newEdge);
 		}
 		
+		/**
+		  * Adds an edge in <code>edgesListTo</code>.
+		  * 
+		  * @param newEdge Edge to add.
+		  */
 		public function addEdgeTo(newEdge:Edge):void {
 			edgesListTo.push(newEdge);
 		}
 		
+		/**
+		  * Sets this node color, from three <code>Number</code> value (B, G, R) into a <code>uint</code> value.
+		  * 
+		  * @param B Blue value, between 0 and 255
+		  * @param G Green value, between 0 and 255
+		  * @param R Red value, between 0 and 255
+		  * @see #decaToHexa
+		  */
 		public function setColor(B:String,G:String,R:String):void{
-			var tempColor:String ="0x"+dec2hex(R)+dec2hex(G)+dec2hex(B);
+			var tempColor:String ="0x"+decaToHexa(R)+decaToHexa(G)+decaToHexa(B);
 			colorUInt = new uint(tempColor);
 		}
 		
-		public function activateClickableURL(){
-			circleHitArea.addEventListener(MouseEvent.CLICK,onClick);
-		}
-		
-		public function unactivateClickableURL(){
-			circleHitArea.removeEventListener(MouseEvent.CLICK,onClick);
-		}
-		
-		public function onClick(evt:MouseEvent){
-			var tempURL:URLRequest = new URLRequest(label.replace(" ","_")+".htm");
-			navigateToURL(tempURL);
-		}
-		
-		public function onMouseMoveOverNode(evt:MouseEvent){
-			trace("Mouse over node "+label);
-			
-			var tempParent = parent;
-			var tempGParent = parent.parent.parent;
-			
-			Mouse.cursor = flash.ui.MouseCursor.BUTTON;
-			
-			with(onMouseOverNodeSprite.graphics){
-				clear();
-				beginFill(colorUInt,1);
-				drawCircle(0,0,8*diameter/10*ratio);
-				beginFill(0xFFFFFF,0.6);
-				drawCircle(0,0,8*diameter/10*ratio);
-				beginFill(0xFFFFFF,0.6);
-				drawCircle(0,0,5*diameter/10*ratio);
-			}
-			
-			onMouseOverNodeSprite.x = x;
-			onMouseOverNodeSprite.y = y;
-			
-			tempParent.removeChild(this);
-			tempParent.addChild(this);
-			
-			labelStyle.bold = true;
-			
-			labelText.setTextFormat(labelStyle);
-			labelText.textColor = colorUInt;
-			
-			tempGParent.addChildAt(onMouseOverNodeSprite,tempGParent.getChildIndex(tempGParent.hitAreasContainer)-1);
-			tempGParent.textsContainer.addChild(labelText);
-			tempGParent.hitAreasContainer.addChild(circleHitArea);
-		}
-		
-		public function onMouseMoveOutNode(evt:MouseEvent){
-			
-			Mouse.cursor = flash.ui.MouseCursor.ARROW;
-			
-			var tempParent = parent;
-			var tempGParent = parent.parent.parent;
-			
-			trace("Mouse out node "+label);
-			
-			tempParent.removeChild(this);
-			tempParent.addChildAt(this,0);
-			
-			labelStyle.bold = false;
-			labelText.background = false;
-			
-			labelText.setTextFormat(labelStyle);
-			labelText.textColor = labelColorUInt;
-			
-			tempGParent.removeChild(onMouseOverNodeSprite);
-			tempGParent.hitAreasContainer.addChild(circleHitArea);
-			
-			tempGParent.textsContainer.addChild(labelText);
-		}
-		
-		public function setTextStyle(){
-			var tempSize:Number = 1*diameter/3;
+		/**
+		  * Sets or refresh the label style.
+		  */
+		public function setTextStyle(scaledTextSize:Boolean=false):void{
+			var tempSize:Number;
+			if(scaledTextSize) tempSize = 1;
+			else tempSize = 1*diameter/3;
 			
 			labelStyle.size = tempSize*ratio;
 			labelText.setTextFormat(labelStyle);
@@ -203,23 +266,186 @@ package com.GEXFExplorer.y2009.data{
 			
 			labelText.setTextFormat(labelStyle);
 		}
-
-		private function d2h( d:int ) : String {
-			var c:Array = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' ];
-			if( d> 255 ) d = 255;
-			var l:int = d / 16;
-			var r:int = d % 16;
+		
+		/**
+		  * Activates the MouseEvent.CLICK event on this node (if <code>label</code> is an URL, for example).
+		  */
+		public function activateClickableURL():void{
+			circleHitArea.addEventListener(MouseEvent.CLICK,onClick);
+		}
+		
+		/**
+		  * Disactivates the MouseEvent.CLICK event on this node.
+		  */
+		public function unactivateClickableURL():void{
+			circleHitArea.removeEventListener(MouseEvent.CLICK,onClick);
+		}
+		
+		/**
+		  * Opens a new window, with <code>label</code> as URL, when this node is clicked.
+		  * 
+		  * @param evt MouseEvent.CLICK
+		  */
+		public function onClick(evt:MouseEvent):void{
+			var tab:Array = ["http://","www.",".fr",".org",".fr",".net"];
+			var test:Boolean = false;
+			for(var i:int=0;i<tab.length;i++){
+				if(label.indexOf(tab[i])>=0){
+					test = true;
+					break;
+				}
+			}
+			var tempURL:URLRequest = new URLRequest(label);
+			if(test) navigateToURL(tempURL);
+			
+			dispatchEvent(new Event(SELECT));
+		}
+		
+		/**
+		  * Changes the display of this node while mouse is over it.
+		  * 
+		  * @param evt MouseEvent.MOUSE_OVER
+		  */
+		public function onMouseMoveOverNode(evt:MouseEvent):void{
+			with(this.graphics){
+				clear();
+				beginFill(brightenColor(colorUInt,35),1);
+				drawCircle(0,0,diameter/1.5*ratio);
+				drawCircle(0,0,3.5*diameter/7.5*ratio);
+				beginFill(colorUInt,1);
+				drawCircle(0,0,2.75*diameter/7.5*ratio);
+			}
+			
+			Mouse.cursor = flash.ui.MouseCursor.BUTTON;
+			labelStyle.bold = true;
+			
+			labelText.setTextFormat(labelStyle);
+			labelText.textColor = brightenColor(colorUInt,20);
+		}
+		
+		/**
+		  * Returns the display as the other nodes when mouse left <code>hitArea</code>.
+		  * 
+		  * @param evt MouseEvent.MOUSE_OUT
+		  */
+		public function onMouseMoveOutNode(evt:MouseEvent):void{
+			Mouse.cursor = flash.ui.MouseCursor.ARROW;
+			labelStyle.bold = false;
+			
+			labelText.setTextFormat(labelStyle);
+			labelText.textColor = labelColorUInt;
+			
+			this.plot();
+		}
+		
+		/**
+		  * Changes the display of this node while mouse is over it and when it is selected.
+		  * 
+		  * @param evt MouseEvent.MOUSE_OVER
+		  */
+		public function onMouseMoveOverNodeSelected(evt:MouseEvent):void{
+			with(this.graphics){
+				clear();
+				beginFill(brightenColor(colorUInt,75),1);
+				drawCircle(0,0,diameter/1.5*ratio);
+				drawCircle(0,0,3.5*diameter/7.5*ratio);
+				beginFill(brightenColor(colorUInt,85),1);
+				drawCircle(0,0,2.75*diameter/7.5*ratio);
+			}
+			
+			Mouse.cursor = flash.ui.MouseCursor.BUTTON;
+			labelStyle.bold = true;
+			
+			labelText.setTextFormat(labelStyle);
+			labelText.textColor = brightenColor(colorUInt,20);
+		}
+		
+		/**
+		  * Returns the display as the other nodes when mouse left <code>hitArea</code> and when it is selected.
+		  * 
+		  * @param evt MouseEvent.MOUSE_OUT
+		  */
+		public function onMouseMoveOutNodeSelected(evt:MouseEvent):void{
+			Mouse.cursor = flash.ui.MouseCursor.ARROW;
+			labelStyle.bold = false;
+			
+			labelText.setTextFormat(labelStyle);
+			labelText.textColor = labelColorUInt;
+			
+			this.plotAsSelected();
+		}
+		
+		/**
+		  * Transforms a decimal value (int formated) into an hexadecimal value.
+		  * Is only useful with the other function, decaToHexa.
+		  * 
+		  * @param d int formated decimal value
+		  * @return Hexadecimal string translation of d
+		  * 
+		  * @author Ammon Lauritzen
+		  * @see http://goflashgo.wordpress.com/
+		  * @see #decaToHexa
+		  */
+		private function decaToHexaFromInt(d:int):String{
+			var c:Array = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+			if(d>255) d = 255;
+			var l:int = d/16;
+			var r:int = d%16;
 			return c[l]+c[r];
 		}
 		
-		private function dec2hex( dec:String ) : String {
+		/**
+		  * Transforms a decimal value (string formated) into an hexadecimal value.
+		  * Really helpfull to adapt the RGB gexf color format in AS3 uint format.
+		  * 
+		  * @param dec String formated decimal value
+		  * @return Hexadecimal string translation of dec
+		  * 
+		  * @author Ammon Lauritzen
+		  * @see http://goflashgo.wordpress.com/
+		  */
+		private function decaToHexa(dec:String):String {
 			var hex:String = "";
 			var bytes:Array = dec.split(" ");
 			for( var i:int = 0; i <bytes.length; i++ )
-				hex += d2h( int(bytes[i]) );
+				hex += decaToHexaFromInt( int(bytes[i]) );
 			return hex;
 		}
 		
+		/**
+		  * Makes a uint color become brigther or darker, depending of the parameter.
+		  * If the <code>perc</code> parameter is above 50, it will brighten the color.
+		  * If the parameter is below 50, it will darken it.
+		  * 
+		  * @param color Original color value, such as 0x88AACC.
+		  * @param perc Value between 0 and 100 to modify original color.
+		  * @return New color value (still such as 0x113355)
+		  * 
+		  * @author Martin Legris
+		  * @see http://blog.martinlegris.com
+		  */
+		protected function brightenColor(color:Number, perc:Number):Number{
+			var factor:Number;
+			var blueOffset:Number = color % 256;
+			var greenOffset:Number = ( color >> 8 ) % 256;
+			var redOffset:Number = ( color >> 16 ) % 256;
+			
+			if(perc > 50 && perc <= 100) {
+				factor = ( ( perc-50 ) / 50 );
+				
+				redOffset += ( 255 - redOffset ) * factor;
+				blueOffset += ( 255 - blueOffset ) * factor;
+				greenOffset += ( 255 - greenOffset ) * factor;
+			}
+			else if( perc < 50 && perc >= 0 ){
+				factor = ( ( 50 - perc ) / 50 );
+				
+				redOffset -= redOffset * factor;
+				blueOffset -= blueOffset * factor;
+				greenOffset -= greenOffset * factor;
+			}
+			
+			return (redOffset<<16|greenOffset<<8|blueOffset);
+		}
 	}
-	
 }
