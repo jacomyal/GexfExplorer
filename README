@@ -5,7 +5,7 @@
 
 I. INTRODUCTION
 
-This open-source free web widget allows webmasters to offer to the user a simple interface to explore their own graphs. To do this, you first have to spatialize and export your graph in gexf format (www.gexf.com), and the best way is currently Gephi (www.gephi.org), a free software to visualize graphs.
+This open-source free web widget allows webmasters to offer to the user a simple interface to explore their own graphs. To do this, you first have to spatialize and export your graph in gexf format (www.gexf.net), and the best way is currently Gephi (www.gephi.org), a free software to visualize graphs.
 When it's done, the next step is as simple: You must download 'bin/GexfExplorer1.0.swf' (available on www.github.com/jacomyal/GexfExplorer), put it and your gexf-encoded graph somewhere locally in your server, and write the following lines in your html code to use it:
 
 <object width="[your_width_value]" height="[your_height_value]">
@@ -20,13 +20,31 @@ When it's done, the next step is as simple: You must download 'bin/GexfExplorer1
 
 II. LIST OF CURRENTLY EXISTING PARAMETERS
 
- - curvedEdges: 'true': edges are clockwise curved; 'false': edges are linear, colored as the source node.
- - clickableNodes: If your label are URLs, you can make it 'true', and clicking on a node opens tue URL in a new tab.
- - labelsColor: Adobe hexadecimal color: 0x[your_hexa_label_color] (Example: Black = 0x000000, White = 0xFFFFFF, ...).
- - font: The font of your label ('Arial', 'Verdana', ...)
- - edgesThickness: The integer thickness of your edges.
- - Others parameters will be available soon...
+ .path (String):
+	The path of your gexf file    /!\ NECESSARY /!\.
+ 
+ .titleColor (0x******, uint, default=0x000000):
+	Now, you can display the title and the author of a graph on stage. To do this, look at http://gexf.net/format/, and use the meta, creator and description balises. If you put those in your file, then title and author will be displayed on stage, with the color indicated by titleColor.
 
+ .curvedEdges (Boolean, default=false):
+	'true': edges are clockwise curved; 'false': edges are linear, colored as the source node.
+ .clickableNodes (Boolean, default=false):
+	If your label are URLs, you can make it 'true', and clicking on a node opens this URL in a new tab (only if label looks like an URL).
+ .scaledTextSize (Boolean, default=true):
+	'true': Labels size is proportional to nodes size; 'false': Labels size is independant of any other factor.
+ .fps (Boolean, default=false):
+	'true': The FPS are displayed in the top-left of the stage; 'false': nothing.
+ 
+ .labelsColor (0x******, uint, default=0x000000):
+	The color of your labels (0x[your_hexa_label_color], example: Black = 0x000000, White = 0xFFFFFF, ...).
+ .font (String, default=Arial):
+	The font of your labels ('Arial', 'Verdana', ...)
+ 
+ .edgesThickness(Number, default=1):
+	The integer thickness of your edges.
+ .edgesColor (0x******, uint, default=[source_node_color]):
+	The color of your edges. If you want edges color to be the same as source node, don't define this parameter.
+	
 
 III. FUNCTIONALITIES
 
@@ -37,6 +55,7 @@ And when your fullscreened, you can change your nodes size with a slider, it may
 IV. COMPLETE EXAMPLE
 
 Download 'bin/*' in a folder, and launch in your web browser 'bin/test.html' (or download everything, and launch it). Then, you'll have a simple demo of this widget, with the following html code:
+
 <object width="550" height="400">
 	<param name="movie" value="GexfExplorer1.0.swf?path=./test.gexf&curvedEdges=true&clickableNodes&clickableNodes=true&labelsColor=0x454545&font=Verdana" />
 	<param name="allowFullScreen" value="true" />
@@ -45,3 +64,5 @@ Download 'bin/*' in a folder, and launch in your web browser 'bin/test.html' (or
 	<embed src="GexfExplorer1.0.swf?path=./test.gexf&curvedEdges=true&clickableNodes=true&labelsColor=0x454545&font=Verdana" allowfullscreen="true" allowScriptAccess="always" width="550" height="400" bgcolor="#000000">
 	</embed>
 </object>
+
+You can also see a demo at http://gexf.net/explorer/.

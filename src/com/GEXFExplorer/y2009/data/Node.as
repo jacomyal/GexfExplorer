@@ -248,9 +248,9 @@ package com.GEXFExplorer.y2009.data{
 		/**
 		  * Sets or refresh the label style.
 		  */
-		public function setTextStyle(scaledTextSize:Boolean=false):void{
+		public function setTextStyle(scaledTextSize:Boolean=true):void{
 			var tempSize:Number;
-			if(scaledTextSize) tempSize = 1;
+			if(!scaledTextSize) tempSize = 1;
 			else tempSize = 1*diameter/3;
 			
 			labelStyle.size = tempSize*ratio;
@@ -296,7 +296,7 @@ package com.GEXFExplorer.y2009.data{
 				}
 			}
 			var tempURL:URLRequest = new URLRequest(label);
-			if(test) navigateToURL(tempURL);
+			if(test && stage.root.loaderInfo.parameters["clickableNodes"]) navigateToURL(tempURL);
 			
 			dispatchEvent(new Event(SELECT));
 		}

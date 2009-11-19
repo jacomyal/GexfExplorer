@@ -92,8 +92,8 @@ package com.GEXFExplorer.y2009.visualization {
 			if(root.loaderInfo.parameters["edgesThickness"]==undefined){edgesThickness = 1;}
 			else{edgesThickness = new Number(root.loaderInfo.parameters["edgesThickness"]);}
 			
-			if(root.loaderInfo.parameters["scaledTextSize"]=="true"){scaledTextSize = true;}
-			else{scaledTextSize = false;}
+			if(root.loaderInfo.parameters["scaledTextSize"]=="false"){scaledTextSize = false;}
+			else{scaledTextSize = true;}
 			
 			if(root.loaderInfo.parameters["edgesColor"]==undefined){edgesColorTest = false;}
 			else{
