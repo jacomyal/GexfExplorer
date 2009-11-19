@@ -65,4 +65,5 @@ Download 'bin/*' in a folder, and launch in your web browser 'bin/test.html' (or
 	</embed>
 </object>
 
-You can also see a demo at http://gexf.net/explorer/.
+To download 'test.gexf', 'test.html' et 'GexfExplorer1.0.swf', you can also download the 'demo_gexfexplorer.zip' at http://github.com/jacomyal/GexfExplorer/downloads.
+Finally, you can find others informations and an online demo at http://gexf.net/explorer/.
