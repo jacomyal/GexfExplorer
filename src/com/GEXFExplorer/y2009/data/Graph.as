@@ -106,7 +106,7 @@ package com.GEXFExplorer.y2009.data{
 		  * @param s A string ID
 		  * @return An attribute ID
 		  */
-		public function getAttribute(s:String):int {
+		public function getAttribute(s:String):String {
 			return attributes.getValue(s);
 		}
 		
@@ -182,11 +182,11 @@ package com.GEXFExplorer.y2009.data{
 		/**
 		  * Sets an attribute.
 		  * 
-		  * @param attribute The name of the attribute.
 		  * @param attributeID The ID of this attribute.
+		  * @param attributeName The name of the attribute.
 		  */
-		public function setAttribute(attribute:String,attributeID:int):void{
-			attributes.put(attribute,attributeID);
+		public function setAttribute(attributeID:String,attributeName:String):void{
+			attributes.put(attributeID,attributeName);
 		}
 		
 		/**

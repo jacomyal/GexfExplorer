@@ -74,6 +74,7 @@ package com.GEXFExplorer.y2009.data{
 			font = newFont;
 			labelStyle = new TextFormat(font);
 			labelColorUInt = newLabelColor;
+			attributes = new HashMap();
 			
 			circleHitArea = new Sprite();
 			
@@ -153,12 +154,13 @@ package com.GEXFExplorer.y2009.data{
 		}
 		
 		/**
-		  * Sets this node attributes.
+		  * Pushes an attribute.
 		  * 
-		  * @param o New attributes hash tab
+		  * @param attribute The ID of the attribute.
+		  * @param attributeID The value of this attribute.
 		  */
-		public function setAttributes(o:HashMap){
-			attributes = o;
+		public function setAttribute(attributeID:String,attributeValue:String):void{
+			attributes.put(attributeID,attributeValue);
 		}
 		
 		/**

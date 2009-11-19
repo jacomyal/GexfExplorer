@@ -58,11 +58,7 @@ package com.GEXFExplorer.y2009.loading {
 		private var progressBar:ProgressBar;
 		private var progressReport:TextField;
 		
-		private var testLoadedFalse:Boolean;
-		
-		private var nodesTest:Boolean;
-		private var edgesTest:Boolean;
-		private var attributesTest:Boolean;
+		private var testLoading:Boolean;
 		
 		private var nodeCounter:Number;
 		private var edgeCounter:Number;
@@ -87,7 +83,7 @@ package com.GEXFExplorer.y2009.loading {
 			
 			globalGraph = gGraph;
 			
-			if(s.root.loaderInfo.parameters["path"]==undefined){adresse = "D:/Text-Mining (stage)/dev/GEXFExplorer/bin/test.gexf";}
+			if(s.root.loaderInfo.parameters["path"]==undefined){adresse = "D:/Text-Mining (stage)/dev/GEXFExplorer (annexe)/test3.gexf";}
 			else{adresse = s.root.loaderInfo.parameters["path"];}
 			
 			if(s.root.loaderInfo.parameters["labelsColor"]==undefined){labelsColor = 0x000000;}
@@ -102,10 +98,6 @@ package com.GEXFExplorer.y2009.loading {
 			backGround.graphics.beginFill(0xDDDDDD,0.8);
 			backGround.graphics.drawRect(0,0,s.stageWidth,70);
 			s.addChild(backGround);
-			
-			nodesTest = true;
-			edgesTest = true;
-			attributesTest = true;
 			
 			file = new URLRequest(adresse);
 			loader = new URLLoader();
@@ -160,7 +152,7 @@ package com.GEXFExplorer.y2009.loading {
 		  * @param e Event.ENTER_FRAME
 		  */
 		protected function loadingHandler(e:Event){
-			if(testLoadedFalse){
+			if(testLoading){
 				progressBar.setProgress(loader.bytesLoaded,loader.bytesTotal);
 				progressReport.text = Math.round(progressBar.percentComplete) + "% Loaded (file)";
 				progressReport.setTextFormat(new TextFormat("Verdana",25,0x000000,true));
@@ -178,18 +170,14 @@ package com.GEXFExplorer.y2009.loading {
 		  * @param e Event.COMPLETE
 		  */
 		protected function onLoadCompleteHandler(e:Event):void{
-			testLoadedFalse = false;
+			testLoading = false;
 			
 			nodeCounter = 0;
 			edgeCounter = 0;
 			
-			var viz:Namespace = new Namespace("viz","http://www.gephi.org/gexf");
-			var isOK = true;
 			var tempNode:Node;
 			var tempEdge:Edge;
-			var tempAttributes:Object;
 			var i:int;
-			var sTitle:String;
 			
 			var base:XML = new XML( e.target.data );
 			var meta:XMLList = base.children();
@@ -199,6 +187,7 @@ package com.GEXFExplorer.y2009.loading {
 			var nodesInFile:XMLList;
 			var edgesInFile:XMLList;
 			var attributesInFile:XMLList;
+			var attributesInNode:XMLList;
 			
 			for(i=0;i<categories.length();i++){
 				if(categories[i].name().localName=='nodes'){
@@ -226,11 +215,7 @@ package com.GEXFExplorer.y2009.loading {
 				}
 			}
 			
-			if(nodesInFile==null) nodesTest=false;
-			if(edgesInFile==null) edgesTest=false;
-			if(attributesInFile==null) attributesTest=false;
-			
-			if(attributesTest){
+			if(attributesInFile!=null){
 				attributesTotal = attributesInFile.length();
 				for each(var attributeXML:XML in attributesInFile) {
 					globalGraph.setAttribute(attributeXML.@title,attributeXML.@id);
@@ -241,10 +226,10 @@ package com.GEXFExplorer.y2009.loading {
 				trace('GEXFLoader:\n\tProblem during the parsing process: No category named "attributes" available.');
 			}
 			
-			if(nodesTest){
+			if(nodesInFile!=null){
 				nodesTotal = nodesInFile.length();
 				for each(var nodeXML:XML in nodesInFile) {
-					tempAttributes = new Object();
+					
 					var tempB:String;
 					var tempG:String;
 					var tempR:String;
@@ -265,13 +250,25 @@ package com.GEXFExplorer.y2009.loading {
 					
 					globalGraph.addNode(tempNode);
 					
+					for each(tempXML in nodeXML.children()){
+						if(tempXML.name().localName=='attvalues'){
+							attributesInNode = tempXML.children();
+						}
+					}
+					
+					for each(tempXML in attributesInNode){
+						if(tempXML.name().localName=='attvalue'){
+							tempNode.setAttribute(tempXML.@id,tempXML.@value);
+						}
+					}
+					
 					nodeCounter++;
 				}
 			}else{
 				trace('GEXFLoader:\n\tProblem during the parsing process: No category named "nodes" available.');
 			}
 			
-			if(edgesTest){
+			if(edgesInFile!=null){
 				edgesTotal = edgesInFile.length();
 				for each(var edgeXML:XML in edgesInFile){
 					if(edgeXML.@source!=edgeXML.@target){
