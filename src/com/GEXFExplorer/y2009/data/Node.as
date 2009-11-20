@@ -44,7 +44,7 @@ package com.GEXFExplorer.y2009.data{
 	  */
 	public class Node extends Sprite {
 		
-		public static const SELECT = "Node selected";
+		public static const CLICK = "Node clicked";
 		
 		public var labelText:TextField;
 		public var labelStyle:TextFormat;
@@ -289,6 +289,8 @@ package com.GEXFExplorer.y2009.data{
 		  * @param evt MouseEvent.CLICK
 		  */
 		public function onClick(evt:MouseEvent):void{
+			dispatchEvent(new Event(CLICK));
+			
 			var tab:Array = ["http://","www.",".fr",".org",".fr",".net"];
 			var test:Boolean = false;
 			for(var i:int=0;i<tab.length;i++){
@@ -299,8 +301,6 @@ package com.GEXFExplorer.y2009.data{
 			}
 			var tempURL:URLRequest = new URLRequest(label);
 			if(test && stage.root.loaderInfo.parameters["clickableNodes"]) navigateToURL(tempURL);
-			
-			dispatchEvent(new Event(SELECT));
 		}
 		
 		/**
