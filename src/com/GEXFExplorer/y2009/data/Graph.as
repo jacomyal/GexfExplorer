@@ -101,13 +101,32 @@ package com.GEXFExplorer.y2009.data{
 		}
 		
 		/**
-		  * Returns ID of parameter attribute.
+		  * Returns key of parameter attribute.
+		  * 
+		  * @param s A string ID
+		  * @return An attribute ID
+		  */
+		public function getAttributeKey(s:String):String {
+			return attributes.getKey(s);
+		}
+		
+		/**
+		  * Returns value of parameter attribute.
 		  * 
 		  * @param s A string ID
 		  * @return An attribute ID
 		  */
 		public function getAttribute(s:String):String {
 			return attributes.getValue(s);
+		}
+		
+		/**
+		  * Returns true if attributes is null, false else.
+		  * 
+		  * @return The boolean result of this test.
+		  */
+		public function isAttributeHashNull():Boolean {
+			return (attributes==null);
 		}
 		
 		/**
@@ -187,6 +206,13 @@ package com.GEXFExplorer.y2009.data{
 		  */
 		public function setAttribute(attributeID:String,attributeName:String):void{
 			attributes.put(attributeID,attributeName);
+		}
+		
+		/**
+		  * Sets attributes as null.
+		  */
+		public function setAttributesNull():void{
+			attributes = null;
 		}
 		
 		/**

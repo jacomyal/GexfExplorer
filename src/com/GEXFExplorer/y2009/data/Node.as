@@ -57,6 +57,7 @@ package com.GEXFExplorer.y2009.data{
 		
 		private var id:Number;
 		private var label:String;
+		private var url:String;
 		private var edgesListTo:Vector.<Edge>;
 		private var edgesListFrom:Vector.<Edge>;
 		private var attributes:HashMap;
@@ -154,6 +155,15 @@ package com.GEXFExplorer.y2009.data{
 		}
 		
 		/**
+		  * Sets this node URL.
+		  * 
+		  * @param u New URL
+		  */
+		public function setURL(u:String='.'){
+			url = u;
+		}
+		
+		/**
 		  * Pushes an attribute.
 		  * 
 		  * @param attribute The ID of the attribute.
@@ -169,24 +179,42 @@ package com.GEXFExplorer.y2009.data{
 		  * @see #onMouseMoveOverNode
 		  */
 		public function plot():void{
-			this.graphics.clear();
-			this.graphics.beginFill(brightenColor(this.colorUInt,35),1);
-			this.graphics.drawCircle(0,0,this.diameter/2*this.ratio);
-			this.graphics.drawCircle(0,0,3.5*this.diameter/10*this.ratio);
-			this.graphics.beginFill(this.colorUInt,1);
-			this.graphics.drawCircle(0,0,2.75*this.diameter/10*this.ratio);
+			if(stage.root.loaderInfo.parameters["nodeBorderColor"]!=undefined){
+				var tempColor:uint = new uint(stage.root.loaderInfo.parameters["nodeBorderColor"]);
+				this.graphics.clear();
+				this.graphics.beginFill(this.colorUInt,1);
+				this.graphics.lineStyle(1,tempColor);
+				this.graphics.drawCircle(0,0,2.75*this.diameter/10*this.ratio);
+				this.graphics.endFill();
+			}else{
+				this.graphics.clear();
+				this.graphics.beginFill(brightenColor(this.colorUInt,35),1);
+				this.graphics.drawCircle(0,0,this.diameter/2*this.ratio);
+				this.graphics.drawCircle(0,0,3.5*this.diameter/10*this.ratio);
+				this.graphics.beginFill(this.colorUInt,1);
+				this.graphics.drawCircle(0,0,2.75*this.diameter/10*this.ratio);
+			}
 		}
 		
 		/**
 		  * Plots the node lighter when it is selected.
 		  */
 		public function plotAsSelected():void{
-			this.graphics.clear();
-			this.graphics.beginFill(brightenColor(this.colorUInt,75),1);
-			this.graphics.drawCircle(0,0,this.diameter/2*this.ratio);
-			this.graphics.drawCircle(0,0,3.2*this.diameter/10*this.ratio);
-			this.graphics.beginFill(brightenColor(this.colorUInt,85),1);
-			this.graphics.drawCircle(0,0,2.75*this.diameter/10*this.ratio);
+			if(stage.root.loaderInfo.parameters["nodeBorderColor"]!=undefined){
+				var tempColor:uint = new uint(stage.root.loaderInfo.parameters["nodeBorderColor"]);
+				this.graphics.clear();
+				this.graphics.beginFill(brightenColor(this.colorUInt,85),1);
+				this.graphics.lineStyle(1,tempColor);
+				this.graphics.drawCircle(0,0,2.75*this.diameter/10*this.ratio);
+				this.graphics.endFill();
+			}else{
+				this.graphics.clear();
+				this.graphics.beginFill(brightenColor(this.colorUInt,75),1);
+				this.graphics.drawCircle(0,0,this.diameter/2*this.ratio);
+				this.graphics.drawCircle(0,0,3.2*this.diameter/10*this.ratio);
+				this.graphics.beginFill(brightenColor(this.colorUInt,85),1);
+				this.graphics.drawCircle(0,0,2.75*this.diameter/10*this.ratio);
+			}
 		}
 		
 		/**
@@ -254,33 +282,33 @@ package com.GEXFExplorer.y2009.data{
 			var tempSize:Number;
 			if(!scaledTextSize) tempSize = 1;
 			else tempSize = 1*diameter/3;
-			
+ 
 			labelStyle.size = tempSize*ratio;
 			labelText.setTextFormat(labelStyle);
-			
+ 
 			labelText.height = labelText.textHeight;
-			
+ 
 			labelText.x = x-labelText.width/2;
 			labelText.y = y-labelText.height/2;
-			
+ 
 			labelText.selectable = false;
 			labelText.textColor = labelColorUInt;
-			
+ 
 			labelText.setTextFormat(labelStyle);
 		}
 		
 		/**
-		  * Activates the MouseEvent.CLICK event on this node (if <code>label</code> is an URL, for example).
+		  * Activates the MouseEvent.CLICK event on this node (if <code>label</code> is an URL).
 		  */
 		public function activateClickableURL():void{
-			circleHitArea.addEventListener(MouseEvent.CLICK,onClick);
+			circleHitArea.addEventListener(MouseEvent.CLICK,onClickURL);
 		}
 		
 		/**
 		  * Disactivates the MouseEvent.CLICK event on this node.
 		  */
-		public function unactivateClickableURL():void{
-			circleHitArea.removeEventListener(MouseEvent.CLICK,onClick);
+		public function unactivateClickable():void{
+			circleHitArea.removeEventListener(MouseEvent.CLICK,onClickURL);
 		}
 		
 		/**
@@ -288,19 +316,30 @@ package com.GEXFExplorer.y2009.data{
 		  * 
 		  * @param evt MouseEvent.CLICK
 		  */
-		public function onClick(evt:MouseEvent):void{
+		public function onClickURL(evt:MouseEvent):void{
 			dispatchEvent(new Event(CLICK));
 			
-			var tab:Array = ["http://","www.",".fr",".org",".fr",".net"];
-			var test:Boolean = false;
-			for(var i:int=0;i<tab.length;i++){
-				if(label.indexOf(tab[i])>=0){
-					test = true;
-					break;
+			var tempURL:URLRequest;
+			
+			if(url!='.'){
+				trace(url);
+				tempURL = new URLRequest(url);
+				navigateToURL(tempURL);
+			} else {
+				var tab:Array = ["http://","www.",".fr",".org",".fr",".net"];
+				var test:Boolean = false;
+				for(var i:int=0;i<tab.length;i++){
+					if(label.indexOf(tab[i])>=0){
+						test = true;
+						break;
+					}
+				}
+				
+				if(test && stage.root.loaderInfo.parameters["clickableNodes"]){
+					tempURL = new URLRequest(label);
+					navigateToURL(tempURL);
 				}
 			}
-			var tempURL:URLRequest = new URLRequest(label);
-			if(test && stage.root.loaderInfo.parameters["clickableNodes"]) navigateToURL(tempURL);
 		}
 		
 		/**
@@ -309,13 +348,24 @@ package com.GEXFExplorer.y2009.data{
 		  * @param evt MouseEvent.MOUSE_OVER
 		  */
 		public function onMouseMoveOverNode(evt:MouseEvent):void{
-			with(this.graphics){
-				clear();
-				beginFill(brightenColor(colorUInt,35),1);
-				drawCircle(0,0,diameter/1.5*ratio);
-				drawCircle(0,0,3.5*diameter/7.5*ratio);
-				beginFill(colorUInt,1);
-				drawCircle(0,0,2.75*diameter/7.5*ratio);
+			if(stage.root.loaderInfo.parameters["nodeBorderColor"]!=undefined){
+				var tempColor:uint = new uint(stage.root.loaderInfo.parameters["nodeBorderColor"]);
+				with(this.graphics){
+					clear();
+					beginFill(colorUInt,1);
+					lineStyle(1,tempColor);
+					drawCircle(0,0,2.75*diameter/7.5*ratio);
+					endFill();
+				}
+			}else{
+				with(this.graphics){
+					clear();
+					beginFill(brightenColor(colorUInt,35),1);
+					drawCircle(0,0,diameter/1.5*ratio);
+					drawCircle(0,0,3.5*diameter/7.5*ratio);
+					beginFill(colorUInt,1);
+					drawCircle(0,0,2.75*diameter/7.5*ratio);
+				}
 			}
 			
 			Mouse.cursor = flash.ui.MouseCursor.BUTTON;

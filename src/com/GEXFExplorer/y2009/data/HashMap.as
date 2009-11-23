@@ -202,5 +202,48 @@ package com.GEXFExplorer.y2009.data {
         {
             return map[key];
         }
+
+        /**
+         *
+         * Retrieves each value assigned to each key in the HashMap instance
+         *
+         * @example
+         * <listing version="3.0">
+         *
+         * import com.ericfeminella.collections.HashMap;
+         * import com.ericfeminella.collections.IMap;
+         *
+         * var map:IMap = new HashMap();
+         * map.put( "admin", adminVO );
+         * map.put( "editor", editorVO );
+         *
+         * trace( map.getValues() ); //[object, adminVO],[object, editorVO]
+         *
+         * </listing>
+         *
+         * @return Array of values assigned for all keys in the map
+         *
+         */
+        public function getValues() : Array
+        {
+            var values:Array = [];
+
+            for (var key:* in map)
+            {
+                values.push( map[key] );
+            }
+            return values;
+        }
+
+        /**
+         *
+         * Retrieves the while map.
+         *
+         * @return the whole dictionnary
+         */
+        public function getMap() : Dictionary
+        {
+            return (map);
+        }
     }
 }

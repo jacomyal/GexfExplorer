@@ -1,8 +1,8 @@
 -- GexfExplorer 1.0 --
 @author: Alexis Jacomy <alexis.jacomy@gmail.com>
 
----
 
+---
 I. INTRODUCTION
 
 This open-source free web widget allows webmasters to offer to the user a simple interface to explore their own graphs. To do this, you first have to spatialize and export your graph in gexf format (www.gexf.net), and the best way is currently Gephi (www.gephi.org), a free software to visualize graphs.
@@ -18,6 +18,7 @@ When it's done, the next step is as simple: You must download 'bin/GexfExplorer1
 </object>
 
 
+---
 II. LIST OF CURRENTLY EXISTING PARAMETERS
 
  .path (String):
@@ -28,30 +29,46 @@ II. LIST OF CURRENTLY EXISTING PARAMETERS
 
  .curvedEdges (Boolean, default=false):
 	'true': edges are clockwise curved; 'false': edges are linear, colored as the source node.
- .clickableNodes (Boolean, default=false):
-	If your label are URLs, you can make it 'true', and clicking on a node opens this URL in a new tab (only if label looks like an URL).
+	
+ .clickableNodes (Boolean, default=true):
+	If your label are URLs, you can make it 'true', and clicking on a node opens this URL in a new tab (only if label "looks like" an URL).
+	
  .scaledTextSize (Boolean, default=true):
 	'true': Labels size is proportional to nodes size; 'false': Labels size is independant of any other factor.
+	
  .fps (Boolean, default=false):
 	'true': The FPS are displayed in the top-left of the stage; 'false': nothing.
  
  .labelsColor (0x******, uint, default=0x000000):
 	The color of your labels (0x[your_hexa_label_color], example: Black = 0x000000, White = 0xFFFFFF, ...).
+ 
+ .nodeBorderColor (0x******, uint, default=[the_old_node_style]):
+	You can know display your nodes differently from before. Actually, for little graphs, it can be really usefull to use full nodes instead of cocentric rings. So, if you define this parameter, your nodes will be displayed as a full disc, with a thin border colored as you define this parameter.
+	
  .font (String, default=Arial):
 	The font of your labels ('Arial', 'Verdana', ...)
  
  .edgesThickness(Number, default=1):
 	The integer thickness of your edges.
+	
  .edgesColor (0x******, uint, default=[source_node_color]):
 	The color of your edges. If you want edges color to be the same as source node, don't define this parameter.
 	
+ .showAttributes (Boolean, default=true):
+	'true': The palette contains a DataGrid which shows each attribute relative to the selected node (when you click on any one). It isn't really functionnal already, because there is a problem with UIComponent in this program... So, test your graph and use it carefully if you do; 'false': nothing.
+	
+ .clickableAttribute (String, default=undefined):
+	If you define this parameter, use the name of an existing attribute name from your file (see http://gexf.net/format/data.html). Then, when you click on a node, you will (if it exists) open a new tab (or window with IE) which requests the value of this node at this attribute. If you don't define it, you can still define clickableNodes as true to open web windows. But if clickableAttribute is defined, then clickableNodes is ignored.
+	
 
+---
 III. FUNCTIONALITIES
 
 Currently, there isn't a lot of functionalities... You can zoom towards your cursor with your mouse wheel, and move the graph with arrow keys.
 And when your fullscreened, you can change your nodes size with a slider, it may be usefull is large graphs, to explore them more locally.
 
 
+---
 IV. COMPLETE EXAMPLE
 
 Download 'bin/*' in a folder, and launch in your web browser 'bin/test.html' (or download everything, and launch it). Then, you'll have a simple demo of this widget, with the following html code:

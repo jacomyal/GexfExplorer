@@ -62,17 +62,18 @@ package com.GEXFExplorer.y2009.visualization {
 		public var hitAreasContainer:Sprite;
 		
 		private var selectedNodeId:int;
+		private var edgesColor:uint;
 		private var ratio:Number;
 		private var globalGraph:Graph;
 		private var quadtree:Quadtree;
-		private var ifShowLabels:Boolean;
-		private var clickable:Boolean;
+		private var clickableAttribute:String;
 		private var curved:Boolean;
-		private var edgesThickness:Number;
-		private var optionsWindow:OptionsWindow;
-		private var edgesColor:uint;
+		private var ifShowLabels:Boolean;
+		private var clickableNodes:Boolean;
 		private var edgesColorTest:Boolean;
 		private var scaledTextSize:Boolean;
+		private var edgesThickness:Number;
+		private var optionsWindow:OptionsWindow;
 	
 		/**
 		  * Initializes VisualGraph attributes and plot the graph, quad by quad.
@@ -83,14 +84,25 @@ package com.GEXFExplorer.y2009.visualization {
 		  */
 		public function VisualGraph(gGraph:Graph,s:Stage){
 			s.addChildAt(this,0);
+			globalGraph = gGraph;
+				
+			optionsWindow = new OptionsWindow(this);
 			
 			if(root.loaderInfo.parameters["fps"]=="true") s.addChild(new FPSCounter(10,6,0xFFAA66));
 			
-			globalGraph = gGraph;
-			clickable = true;
+			if(root.loaderInfo.parameters["clickableNodes"]=="false"){clickableNodes = false;}
+			else{clickableNodes = true;}
 			
 			if(root.loaderInfo.parameters["edgesThickness"]==undefined){edgesThickness = 1;}
 			else{edgesThickness = new Number(root.loaderInfo.parameters["edgesThickness"]);}
+			
+			if(root.loaderInfo.parameters["clickableAttribute"]==undefined){clickableAttribute = null;}
+			else{
+				clickableAttribute = new String(root.loaderInfo.parameters["url"]);
+				clickableNodes = false;
+			}
+			
+			//if(root.loaderInfo.parameters["path"]==undefined){clickableAttribute = "url"; clickableNodes = false;}
 			
 			if(root.loaderInfo.parameters["scaledTextSize"]=="false"){scaledTextSize = false;}
 			else{scaledTextSize = true;}
@@ -123,13 +135,37 @@ package com.GEXFExplorer.y2009.visualization {
 			var thisEdge:Edge;
 			var i:Number;
 			
+			addChild(edgesContainer);
+			addChild(nodesContainer);
+			addChild(textsContainer);
+			addChild(hitAreasContainer);
+			
 			for each(tempQuad in quadtree.getQuadsArray()){
+				edgesContainer.addChild(tempQuad.edgesContainer);
+				nodesContainer.addChild(tempQuad.nodesContainer);
+				textsContainer.addChild(tempQuad.textsContainer);
+				hitAreasContainer.addChild(tempQuad.hitAreasContainer);
+				
 				for each(thisNode in tempQuad.nodesArrayAccess){
+					tempQuad.nodesContainer.addChild(thisNode);
+					
 					thisNode.plot();
-					thisNode.addEventListener(Node.SELECT,onClickANode);
-					plotHitArea(thisNode);
+					
 					thisNode.setTextStyle(scaledTextSize);
-					if(clickable) thisNode.activateClickableURL();
+					
+					thisNode.addEventListener(Node.CLICK,onClickANode);
+					plotHitArea(thisNode);
+					
+					var key:String = globalGraph.getAttributeKey(clickableAttribute);
+					
+					if(clickableNodes){
+						thisNode.setURL();
+						thisNode.activateClickableURL();
+					}
+					else if(clickableAttribute!=null){
+						thisNode.setURL(thisNode.getAttributes().getValue(key));
+						thisNode.activateClickableURL();
+					}
 					
 					for (i = 0;i<thisNode.getEdgesTo().length;i++){
 						thisEdge = thisNode.getEdgesTo()[i];
@@ -143,21 +179,10 @@ package com.GEXFExplorer.y2009.visualization {
 						tempQuad.edgesContainer.addChild(thisEdge);
 					}
 					
-					tempQuad.nodesContainer.addChild(thisNode);
 					tempQuad.textsContainer.addChild(thisNode.labelText);
 					tempQuad.hitAreasContainer.addChild(thisNode.circleHitArea);
 				}
-				
-				edgesContainer.addChild(tempQuad.edgesContainer);
-				nodesContainer.addChild(tempQuad.nodesContainer);
-				textsContainer.addChild(tempQuad.textsContainer);
-				hitAreasContainer.addChild(tempQuad.hitAreasContainer);
 			}
-			
-			addChild(edgesContainer);
-			addChild(nodesContainer);
-			addChild(textsContainer);
-			addChild(hitAreasContainer);
 			
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, moveSceneWithKeyboard);
 			this.stage.addEventListener(MouseEvent.MOUSE_UP, dropScene);
@@ -165,8 +190,6 @@ package com.GEXFExplorer.y2009.visualization {
 			this.stage.addEventListener(MouseEvent.MOUSE_DOWN, dragScene);
 			
 			dispatchEvent(new Event(GRAPH_DRAWN));
-				
-			optionsWindow = new OptionsWindow(this);
 			
 			trace("Graph drawn.");
 		}
@@ -200,9 +223,9 @@ package com.GEXFExplorer.y2009.visualization {
 		}
 		
 		/**
-		  * Returns the nodes vector.
+		  * Select a node when user clicks on it.
 		  * 
-		  * @return The global nodes vector.
+		  * @param e Node.CLICK
 		  */
 		public function onClickANode(e:Event):void{
 			selectNode(e.target as Node);
@@ -217,8 +240,7 @@ package com.GEXFExplorer.y2009.visualization {
 			var currentSelection:Node = globalGraph.getNode(selectedNodeId);
 			
 			currentSelection.unselect();
-			unselectEdges(currentSelection);
-			trace("Problem:\n\tOld selected node not found (number "+selectedNodeId+").");
+			if(!unselectEdges(currentSelection))trace("Problem:\n\tOld selected node not found (number "+selectedNodeId+").");
 			
 			selectedNodeId = n.idAccess;
 			n.select();
@@ -290,8 +312,9 @@ package com.GEXFExplorer.y2009.visualization {
 		  * Plots each node from/to the parameter node as normal.
 		  * 
 		  * @param n The old selected node.
+		  * @return True if it is okay, Flase else.
 		  */
-		public function unselectEdges(n:Node):void{
+		public function unselectEdges(n:Node):Boolean{
 			var e:Edge;
 			var i:int = 0;
 			var o:int = 0;
@@ -343,6 +366,8 @@ package com.GEXFExplorer.y2009.visualization {
 			}
 			
 			trace(n.labelAccess+" node:\n\t"+i+" in edges drawn as normal / "+o+" out edges drawn as normal.");
+			
+			return(n!=null);
 		}
 		
 		/**

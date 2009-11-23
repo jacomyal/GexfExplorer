@@ -83,7 +83,7 @@ package com.GEXFExplorer.y2009.loading {
 			
 			globalGraph = gGraph;
 			
-			if(s.root.loaderInfo.parameters["path"]==undefined){adresse = "D:/Text-Mining (stage)/dev/GEXFExplorer (annexe)/test3.gexf";}
+			if(s.root.loaderInfo.parameters["path"]==undefined){adresse = "D:/Text-Mining (stage)/dev/GEXFExplorer/bin/codeminer.gexf";}
 			else{adresse = s.root.loaderInfo.parameters["path"];}
 			
 			if(s.root.loaderInfo.parameters["labelsColor"]==undefined){labelsColor = 0x000000;}
@@ -189,6 +189,9 @@ package com.GEXFExplorer.y2009.loading {
 			var attributesInFile:XMLList;
 			var attributesInNode:XMLList;
 			
+			var attributesInGraphTest:Boolean = false;
+			var attributesInNodeTest:Boolean = false;
+			
 			for(i=0;i<categories.length();i++){
 				if(categories[i].name().localName=='nodes'){
 					nodesInFile = categories[i].children();
@@ -217,13 +220,20 @@ package com.GEXFExplorer.y2009.loading {
 			
 			if(attributesInFile!=null){
 				attributesTotal = attributesInFile.length();
-				for each(var attributeXML:XML in attributesInFile) {
-					globalGraph.setAttribute(attributeXML.@title,attributeXML.@id);
-					
-					attributesCounter++;
+				for each(var attributeXML:XML in attributesInFile){
+					if(attributeXML.name().localName=="attribute"){
+						trace("New attribute id: " + attributeXML.@id + ", title: " + attributeXML.@title);
+						globalGraph.setAttribute(attributeXML.@id,attributeXML.@title);
+						if(!attributesInGraphTest){
+							attributesInGraphTest = true;
+							trace("Attributes in graph.");
+						}
+						attributesCounter++;
+					}
 				}
 			}else{
 				trace('GEXFLoader:\n\tProblem during the parsing process: No category named "attributes" available.');
+				globalGraph.setAttributesNull();
 			}
 			
 			if(nodesInFile!=null){
@@ -234,7 +244,7 @@ package com.GEXFExplorer.y2009.loading {
 					var tempG:String;
 					var tempR:String;
 					
-					trace("Node number: " + nodeCounter + ", label: " + nodeXML.@label);
+					trace("New node: number: " + nodeCounter + ", label: " + nodeXML.@label);
 					
 					globalGraph.pushLabel(nodeXML.@label);
 					globalGraph.setIDConnection(nodeXML.@id,nodeCounter)
@@ -258,6 +268,10 @@ package com.GEXFExplorer.y2009.loading {
 					
 					for each(tempXML in attributesInNode){
 						if(tempXML.name().localName=='attvalue'){
+							if(!attributesInNodeTest){
+								attributesInNodeTest = true;
+								trace("Attributes in nodes.");
+							}
 							tempNode.setAttribute(tempXML.@id,tempXML.@value);
 						}
 					}
@@ -282,6 +296,8 @@ package com.GEXFExplorer.y2009.loading {
 			}else{
 				trace('GEXFLoader:\n\tProblem during the parsing process: No category named "edges" available.');
 			}
+			
+			if(!(attributesInGraphTest&&attributesInNodeTest)) globalGraph.setAttributesNull();
 			
 			globalGraph.cleanHash();
 			
