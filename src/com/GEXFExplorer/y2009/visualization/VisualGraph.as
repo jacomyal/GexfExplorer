@@ -684,10 +684,11 @@ package com.GEXFExplorer.y2009.visualization {
 		  * @param evt MouseEvent.MOUSE_WHEEL
 		  */
 		protected function zoomScene(evt:MouseEvent):void{
-			if((evt.stageY<optionsWindow.getBackground().y+optionsWindow.getBackground().height)&&(evt.stageY>optionsWindow.getBackground().y)
+			if(!(evt.stageY<optionsWindow.getBackground().y+optionsWindow.getBackground().height)&&(evt.stageY>optionsWindow.getBackground().y)
 			   &&(evt.stageX<optionsWindow.getBackground().x+optionsWindow.getBackground().width)&&(evt.stageX>optionsWindow.getBackground().x)
-			   &&(optionsWindow.contains(optionsWindow.getBackground()))){
-			}else{
+			   &&(optionsWindow.contains(optionsWindow.getBackground()))
+			   ||((evt.stageX<stage.stageWidth)&&(evt.stageX>0)
+			   &&(evt.stageY<stage.stageHeight)&&(evt.stageY>0))){
 				var tempX:Number = new Number(this.x);
 				var tempY:Number = new Number(this.y);
 				if (evt.delta>=0){
