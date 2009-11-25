@@ -71,6 +71,7 @@ package com.GEXFExplorer.y2009.loading {
 		private var adresse:String;
 		private var labelsColor:uint;
 		private var font:String;
+		private var initialRatio:Number;
 		
 		/**
 		  * Creates the GEXFLoader instance and initializes all variables.
@@ -83,7 +84,7 @@ package com.GEXFExplorer.y2009.loading {
 			
 			globalGraph = gGraph;
 			
-			if(s.root.loaderInfo.parameters["path"]==undefined){adresse = "D:/Text-Mining (stage)/dev/GEXFExplorer/bin/codeminer.gexf";}
+			if(s.root.loaderInfo.parameters["path"]==undefined){adresse = "D:/Text-Mining (stage)/dev/GEXFExplorer/bin/test.gexf";}
 			else{adresse = s.root.loaderInfo.parameters["path"];}
 			
 			if(s.root.loaderInfo.parameters["labelsColor"]==undefined){labelsColor = 0x000000;}
@@ -91,6 +92,12 @@ package com.GEXFExplorer.y2009.loading {
 			
 			if(s.root.loaderInfo.parameters["font"]==undefined){font = "Arial";}
 			else{font = s.root.loaderInfo.parameters["font"];}
+			
+			if(s.root.loaderInfo.parameters["initialNodesRatio"]==undefined){initialRatio = 1;}
+			else{
+				initialRatio = new Number(s.root.loaderInfo.parameters["initialNodesRatio"]);
+			}
+			initialRatio *= 7.5;
 			
 			backGround = new Sprite();
 			backGround.x = 0;
@@ -249,7 +256,7 @@ package com.GEXFExplorer.y2009.loading {
 					globalGraph.pushLabel(nodeXML.@label);
 					globalGraph.setIDConnection(nodeXML.@id,nodeCounter)
 					
-					tempNode = new Node(nodeCounter, nodeXML.@label, labelsColor, font);
+					tempNode = new Node(nodeCounter, nodeXML.@label, labelsColor, font, initialRatio);
 					tempNode.x = nodeXML.children().normalize().@x*10;
 					tempNode.y = -1*nodeXML.children().normalize().@y*10;
 					tempNode.setDiameter(nodeXML.children().normalize().@value);

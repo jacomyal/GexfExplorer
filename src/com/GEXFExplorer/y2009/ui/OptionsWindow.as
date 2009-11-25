@@ -132,13 +132,21 @@ package com.GEXFExplorer.y2009.ui {
 				enable = true;
 			}
 			
+			var tempMark:Number;
+			if(stage.root.loaderInfo.parameters["initialNodesRatio"]==undefined){tempMark = 1;}
+			else{
+				tempMark = new Number(stage.root.loaderInfo.parameters["initialNodesRatio"]);
+			}
+			
+			tempMark *= 75;
+			
 			nodesSizeSlider = new Slider();
 			with(nodesSizeSlider){
 				move(10,50);
 				setSize(backGround.width-20,0);
 				minimum = 0;
-				maximum = 400;
-				value = 75;
+				maximum = Math.max(3*tempMark,300);
+				value = tempMark;
 				liveDragging = true;
 			}
 			
@@ -341,7 +349,7 @@ package com.GEXFExplorer.y2009.ui {
 		}
 		
 		/**
-		  * Changes the user interface, between <code>backGround</code> and <code>fullscreen</code>, when <code>stage.displayState</code> changes.
+		  * Changes the user interface, between backGround and fullscreen, when <code>stage.displayState</code> changes.
 		  * 
 		  * @param evt Event.RESIZE
 		  */

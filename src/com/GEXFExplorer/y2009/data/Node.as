@@ -70,7 +70,7 @@ package com.GEXFExplorer.y2009.data{
 		  * @param newLabelColor Node label color
 		  * @param newFont Node label font
 		  */
-		public function Node(newId:Number, newLabel:String, newLabelColor:uint, newFont:String) {
+		public function Node(newId:Number, newLabel:String, newLabelColor:uint, newFont:String, newRatio:Number) {
 			
 			font = newFont;
 			labelStyle = new TextFormat(font);
@@ -85,7 +85,7 @@ package com.GEXFExplorer.y2009.data{
 			
 			id = newId;
 			diameter = new Number();
-			ratio = 7.5;
+			ratio = newRatio;
 			
 			hitArea = circleHitArea;
 			

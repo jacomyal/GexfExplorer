@@ -44,6 +44,9 @@ II. LIST OF CURRENTLY EXISTING PARAMETERS
  
  .nodeBorderColor (0x******, uint, default=[the_old_node_style]):
 	You can know display your nodes differently from before. Actually, for little graphs, it can be really usefull to use full nodes instead of cocentric rings. So, if you define this parameter, your nodes will be displayed as a full disc, with a thin border colored as you define this parameter.
+ 
+ .initialNodesRatio(Number, default=1):
+	The initial ratio of each node size.
 	
  .font (String, default=Arial):
 	The font of your labels ('Arial', 'Verdana', ...)

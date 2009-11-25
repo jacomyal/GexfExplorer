@@ -19,9 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 */
-
+ 
 package com.GEXFExplorer.y2009.visualization {
-	
+ 
 	import flash.ui.Keyboard;
 	import flash.text.TextField;
 	import flash.display.Stage;
@@ -42,7 +42,7 @@ package com.GEXFExplorer.y2009.visualization {
 	import com.GEXFExplorer.y2009.data.Node;
 	import com.GEXFExplorer.y2009.data.Quad;
 	import com.GEXFExplorer.y2009.loading.GEXFLoader;
-	
+ 
 	/**
 	  * Contains each graphic element directly regarding some data (currently nodes and edges).
 	  * All the methods to draw graphic elements (except for the debug) are here.
@@ -52,15 +52,15 @@ package com.GEXFExplorer.y2009.visualization {
 	  * @playerversion Flash 10
 	  */
 	public class VisualGraph extends Sprite{
-		
+ 
 		public static const GRAPH_DRAWN:String = "Graph drawn";
 		public static const SELECT:String = "New node has been selected";
-		
+ 
 		public var edgesContainer:Sprite;
 		public var nodesContainer:Sprite;
 		public var textsContainer:Sprite;
 		public var hitAreasContainer:Sprite;
-		
+ 
 		private var selectedNodeId:int;
 		private var edgesColor:uint;
 		private var ratio:Number;
@@ -74,7 +74,7 @@ package com.GEXFExplorer.y2009.visualization {
 		private var scaledTextSize:Boolean;
 		private var edgesThickness:Number;
 		private var optionsWindow:OptionsWindow;
-	
+ 
 		/**
 		  * Initializes VisualGraph attributes and plot the graph, quad by quad.
 		  * 
@@ -85,79 +85,79 @@ package com.GEXFExplorer.y2009.visualization {
 		public function VisualGraph(gGraph:Graph,s:Stage){
 			s.addChildAt(this,0);
 			globalGraph = gGraph;
-				
+ 
 			optionsWindow = new OptionsWindow(this);
-			
+ 
 			if(root.loaderInfo.parameters["fps"]=="true") s.addChild(new FPSCounter(10,6,0xFFAA66));
-			
+ 
 			if(root.loaderInfo.parameters["clickableNodes"]=="false"){clickableNodes = false;}
 			else{clickableNodes = true;}
-			
+ 
 			if(root.loaderInfo.parameters["edgesThickness"]==undefined){edgesThickness = 1;}
 			else{edgesThickness = new Number(root.loaderInfo.parameters["edgesThickness"]);}
-			
+ 
 			if(root.loaderInfo.parameters["clickableAttribute"]==undefined){clickableAttribute = null;}
 			else{
 				clickableAttribute = new String(root.loaderInfo.parameters["url"]);
 				clickableNodes = false;
 			}
-			
+ 
 			//if(root.loaderInfo.parameters["path"]==undefined){clickableAttribute = "url"; clickableNodes = false;}
-			
+ 
 			if(root.loaderInfo.parameters["scaledTextSize"]=="false"){scaledTextSize = false;}
 			else{scaledTextSize = true;}
-			
+ 
 			if(root.loaderInfo.parameters["edgesColor"]==undefined){edgesColorTest = false;}
 			else{
 				edgesColor = new uint(root.loaderInfo.parameters["edgesColor"]);
 				edgesColorTest = true;
 			}
-			
+ 
 			if(root.loaderInfo.parameters["curvedEdges"]=="true"){curved = true;}
 			else{curved = false;}
-			
+ 
 			edgesContainer = new Sprite();
 			nodesContainer = new Sprite();
 			textsContainer = new Sprite();
 			hitAreasContainer = new Sprite();
-			
+ 
 			ifShowLabels = true;
 			if(root.loaderInfo.parameters["quadtreeDepth"]==undefined) quadtree = new Quadtree(2,this);
 			else quadtree = new Quadtree(root.loaderInfo.parameters["quadtreeDepth"],this);
 			quadtree.actualize();
-			
+ 
 			scaleAndFixeGraph();
-			
+ 
 			var nodeRadius:Number = Math.floor((400/ratio)/(globalGraph.getNodes.length)^2);
-			
+ 
 			var tempQuad:Quad;
 			var thisNode:Node;
 			var thisEdge:Edge;
 			var i:Number;
-			
+ 
 			addChild(edgesContainer);
 			addChild(nodesContainer);
 			addChild(textsContainer);
 			addChild(hitAreasContainer);
-			
+ 
 			for each(tempQuad in quadtree.getQuadsArray()){
 				edgesContainer.addChild(tempQuad.edgesContainer);
 				nodesContainer.addChild(tempQuad.nodesContainer);
 				textsContainer.addChild(tempQuad.textsContainer);
 				hitAreasContainer.addChild(tempQuad.hitAreasContainer);
-				
+ 
 				for each(thisNode in tempQuad.nodesArrayAccess){
 					tempQuad.nodesContainer.addChild(thisNode);
-					
+ 
 					thisNode.plot();
-					
+ 
 					thisNode.setTextStyle(scaledTextSize);
-					
+ 
 					thisNode.addEventListener(Node.CLICK,onClickANode);
 					plotHitArea(thisNode);
-					
+ 
 					var key:String = globalGraph.getAttributeKey(clickableAttribute);
-					
+ 
 					if(clickableNodes){
 						thisNode.setURL();
 						thisNode.activateClickableURL();
@@ -166,7 +166,7 @@ package com.GEXFExplorer.y2009.visualization {
 						thisNode.setURL(thisNode.getAttributes().getValue(key));
 						thisNode.activateClickableURL();
 					}
-					
+ 
 					for (i = 0;i<thisNode.getEdgesTo().length;i++){
 						thisEdge = thisNode.getEdgesTo()[i];
 						if(edgesColorTest){
@@ -178,22 +178,22 @@ package com.GEXFExplorer.y2009.visualization {
 						}
 						tempQuad.edgesContainer.addChild(thisEdge);
 					}
-					
+ 
 					tempQuad.textsContainer.addChild(thisNode.labelText);
 					tempQuad.hitAreasContainer.addChild(thisNode.circleHitArea);
 				}
 			}
-			
+ 
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, moveSceneWithKeyboard);
 			this.stage.addEventListener(MouseEvent.MOUSE_UP, dropScene);
 			this.stage.addEventListener(MouseEvent.MOUSE_WHEEL, zoomScene);
 			this.stage.addEventListener(MouseEvent.MOUSE_DOWN, dragScene);
-			
+ 
 			dispatchEvent(new Event(GRAPH_DRAWN));
-			
+ 
 			trace("Graph drawn.");
 		}
-		
+ 
 		/**
 		  * Returns the graph.
 		  * 
@@ -203,7 +203,7 @@ package com.GEXFExplorer.y2009.visualization {
 		public function getGraph():Graph{
 			return globalGraph;
 		}
-		
+ 
 		/**
 		  * Returns the selected node label.
 		  * 
@@ -212,7 +212,7 @@ package com.GEXFExplorer.y2009.visualization {
 		public function getSelectedNode():Node{
 			return globalGraph.getNode(selectedNodeId);
 		}
-		
+ 
 		/**
 		  * Returns the nodes vector.
 		  * 
@@ -221,7 +221,7 @@ package com.GEXFExplorer.y2009.visualization {
 		public function getNodes():Vector.<Node>{
 			return globalGraph.getNodes;
 		}
-		
+ 
 		/**
 		  * Select a node when user clicks on it.
 		  * 
@@ -230,7 +230,7 @@ package com.GEXFExplorer.y2009.visualization {
 		public function onClickANode(e:Event):void{
 			selectNode(e.target as Node);
 		}
-		
+ 
 		/**
 		  * Sets selectedNodeLabel.
 		  * 
@@ -238,17 +238,17 @@ package com.GEXFExplorer.y2009.visualization {
 		  */
 		public function selectNode(n:Node):void{
 			var currentSelection:Node = globalGraph.getNode(selectedNodeId);
-			
+ 
 			currentSelection.unselect();
 			if(!unselectEdges(currentSelection))trace("Problem:\n\tOld selected node not found (number "+selectedNodeId+").");
-			
+ 
 			selectedNodeId = n.idAccess;
 			n.select();
 			selectEdges(n);
-			
+ 
 			dispatchEvent(new Event(SELECT));
 		}
-		
+ 
 		/**
 		  * Plots each node from/to the parameter node as selected edge.
 		  * 
@@ -258,14 +258,14 @@ package com.GEXFExplorer.y2009.visualization {
 			var e:Edge;
 			var i:int = 0;
 			var o:int = 0;
-			
+ 
 			if(edgesColorTest){
 				if(curved){
 					for each(e in n.getEdgesFrom()){
 						plotCurvedEdgeAsSelected(e);
 						o++;
 					}
-					
+ 
 					for each(e in n.getEdgesTo()){
 						plotCurvedEdgeAsSelected(e);
 						i++;
@@ -275,7 +275,7 @@ package com.GEXFExplorer.y2009.visualization {
 						plotLinearEdgeAsSelected(e);
 						o++;
 					}
-					
+ 
 					for each(e in n.getEdgesTo()){
 						plotLinearEdgeAsSelected(e);
 						i++;
@@ -287,7 +287,7 @@ package com.GEXFExplorer.y2009.visualization {
 						plotCurvedEdgeAsSelectedWithNodeColor(e);
 						o++;
 					}
-					
+ 
 					for each(e in n.getEdgesTo()){
 						plotCurvedEdgeAsSelectedWithNodeColor(e);
 						i++;
@@ -297,17 +297,17 @@ package com.GEXFExplorer.y2009.visualization {
 						plotLinearEdgeAsSelectedWithNodeColor(e);
 						o++;
 					}
-					
+ 
 					for each(e in n.getEdgesTo()){
 						plotLinearEdgeAsSelectedWithNodeColor(e);
 						i++;
 					}
 				}
 			}
-			
+ 
 			trace(n.labelAccess+" node:\n\t"+i+" in edges drawn as selected / "+o+" out edges drawn as selected.");
 		}
-		
+ 
 		/**
 		  * Plots each node from/to the parameter node as normal.
 		  * 
@@ -318,14 +318,14 @@ package com.GEXFExplorer.y2009.visualization {
 			var e:Edge;
 			var i:int = 0;
 			var o:int = 0;
-			
+ 
 			if(edgesColorTest){
 				if(curved){
 					for each(e in n.getEdgesFrom()){
 						plotCurvedEdge(e);
 						o++;
 					}
-					
+ 
 					for each(e in n.getEdgesTo()){
 						plotCurvedEdge(e);
 						i++;
@@ -335,7 +335,7 @@ package com.GEXFExplorer.y2009.visualization {
 						plotLinearEdge(e);
 						o++;
 					}
-					
+ 
 					for each(e in n.getEdgesTo()){
 						plotLinearEdge(e);
 						i++;
@@ -347,7 +347,7 @@ package com.GEXFExplorer.y2009.visualization {
 						plotCurvedEdgeWithNodeColor(e);
 						o++;
 					}
-					
+ 
 					for each(e in n.getEdgesTo()){
 						plotCurvedEdgeWithNodeColor(e);
 						i++;
@@ -357,19 +357,19 @@ package com.GEXFExplorer.y2009.visualization {
 						plotLinearEdgeWithNodeColor(e);
 						o++;
 					}
-					
+ 
 					for each(e in n.getEdgesTo()){
 						plotLinearEdgeWithNodeColor(e);
 						i++;
 					}
 				}
 			}
-			
+ 
 			trace(n.labelAccess+" node:\n\t"+i+" in edges drawn as normal / "+o+" out edges drawn as normal.");
-			
+ 
 			return(n!=null);
 		}
-		
+ 
 		/**
 		  * Changes the size of <code>tempNode</code>, and keep or not the label on the screen, depending of the value of <code>ifLabels</code>.
 		  * 
@@ -385,7 +385,7 @@ package com.GEXFExplorer.y2009.visualization {
 			plotHitArea(tempNode);
 			if(ifLabels) tempNode.setTextStyle(scaledTextSize);
 		}
-		
+ 
 		/**
 		  * Zooms and move the graph to center it and to scale it.
 		  */
@@ -395,7 +395,7 @@ package com.GEXFExplorer.y2009.visualization {
 			var xMax:Number = globalGraph.getNodes[0].x;
 			var yMin:Number = globalGraph.getNodes[0].y;
 			var yMax:Number = globalGraph.getNodes[0].y;
-			
+ 
 			for (var i:Number = 1;i<globalGraph.getNodes.length;i++){
 				if(globalGraph.getNodes[i].x < xMin)
 					xMin = globalGraph.getNodes[i].x;
@@ -406,30 +406,30 @@ package com.GEXFExplorer.y2009.visualization {
 				if(globalGraph.getNodes[i].y > yMax)
 					yMax = globalGraph.getNodes[i].y;
 			}
-			
+ 
 			trace("xMax: "+xMax+", xMin: "+xMin+", yMax: "+yMax+", yMin: "+yMin);
-			
+ 
 			var xCenter:Number = (xMax + xMin)/2;
 			var yCenter:Number = (yMax + yMin)/2;
-			
+ 
 			var xSize:Number = xMax - xMin;
 			var ySize:Number = yMax - yMin;
-			
+ 
 			if (xSize>ySize){
 				ratio = stage.stageWidth/(xSize);
 			}
 			else{
 				ratio = stage.stageHeight/(ySize);
 			}
-			
+ 
 			this.x = stage.stageWidth/2;
 			this.y = stage.stageHeight/2;
 			this.scaleX = ratio;
 			this.scaleY = ratio;
-			
+ 
 			//checkQuadtree();
 		}
-		
+ 
 		/**
 		  * Plots <code>tempEdge</code> as a linear edge.
 		  * 
@@ -438,21 +438,21 @@ package com.GEXFExplorer.y2009.visualization {
 		protected function plotLinearEdge(tempEdge:Edge):void {
 			var nodeTo:Node = globalGraph.getNode(tempEdge.idTargetAccess);
 			var nodeFrom:Node = globalGraph.getNode(tempEdge.idSourceAccess);
-			
+ 
 			var tempX1:Number = nodeFrom.x;
 			var tempY1:Number = nodeFrom.y;
 			var tempX2:Number = nodeTo.x;
 			var tempY2:Number = nodeTo.y;
-			
+ 
 			tempEdge.graphics.clear();
-			
+ 
 			tempEdge.graphics.lineStyle(edgesThickness,edgesColor);
-				
+ 
 			tempEdge.graphics.moveTo(tempX1,tempY1);
 			tempEdge.graphics.lineTo(tempX2,tempY2);
-			
+ 
 		}
-		
+ 
 		/**
 		  * Plots <code>tempEdge</code> as a curved edge.
 		  * 
@@ -461,23 +461,23 @@ package com.GEXFExplorer.y2009.visualization {
 		protected function plotCurvedEdge(tempEdge:Edge):void {
 			var nodeTo:Node = globalGraph.getNode(tempEdge.idTargetAccess);
 			var nodeFrom:Node = globalGraph.getNode(tempEdge.idSourceAccess);
-			
+ 
 			var tempX2:Number = nodeFrom.x;
 			var tempY2:Number = nodeFrom.y;
 			var tempX1:Number = nodeTo.x;
 			var tempY1:Number = nodeTo.y;
-			
+ 
 			var x_controle:Number = (tempX1+tempX2)/2 - (tempY2-tempY1)/4;
 			var y_controle:Number = (tempY1+tempY2)/2 - (tempX1-tempX2)/4;
-			
+ 
 			tempEdge.graphics.clear();
-			
+ 
 			tempEdge.graphics.lineStyle(edgesThickness,edgesColor);
-			
+ 
 			tempEdge.graphics.moveTo(tempX1,tempY1);
 			tempEdge.graphics.curveTo(x_controle,y_controle,tempX2,tempY2);
 		}
-		
+ 
 		/**
 		  * Plots <code>tempEdge</code> as a linear edge when source or target is selected.
 		  * 
@@ -486,21 +486,21 @@ package com.GEXFExplorer.y2009.visualization {
 		protected function plotLinearEdgeAsSelected(tempEdge:Edge):void {
 			var nodeTo:Node = globalGraph.getNode(tempEdge.idTargetAccess);
 			var nodeFrom:Node = globalGraph.getNode(tempEdge.idSourceAccess);
-			
+ 
 			var tempX1:Number = nodeFrom.x;
 			var tempY1:Number = nodeFrom.y;
 			var tempX2:Number = nodeTo.x;
 			var tempY2:Number = nodeTo.y;
-			
+ 
 			tempEdge.graphics.clear();
-			
+ 
 			tempEdge.graphics.lineStyle(edgesThickness*2.3,brightenColor(edgesColor,70));
-				
+ 
 			tempEdge.graphics.moveTo(tempX1,tempY1);
 			tempEdge.graphics.lineTo(tempX2,tempY2);
-			
+ 
 		}
-		
+ 
 		/**
 		  * Plots <code>tempEdge</code> as a curved edge when source or target is selected.
 		  * 
@@ -509,23 +509,23 @@ package com.GEXFExplorer.y2009.visualization {
 		protected function plotCurvedEdgeAsSelected(tempEdge:Edge):void {
 			var nodeTo:Node = globalGraph.getNode(tempEdge.idTargetAccess);
 			var nodeFrom:Node = globalGraph.getNode(tempEdge.idSourceAccess);
-			
+ 
 			var tempX2:Number = nodeFrom.x;
 			var tempY2:Number = nodeFrom.y;
 			var tempX1:Number = nodeTo.x;
 			var tempY1:Number = nodeTo.y;
-			
+ 
 			var x_controle:Number = (tempX1+tempX2)/2 - (tempY2-tempY1)/4;
 			var y_controle:Number = (tempY1+tempY2)/2 - (tempX1-tempX2)/4;
-			
+ 
 			tempEdge.graphics.clear();
-			
+ 
 			tempEdge.graphics.lineStyle(edgesThickness*2.3,brightenColor(edgesColor,70));
-				
+ 
 			tempEdge.graphics.moveTo(tempX1,tempY1);
 			tempEdge.graphics.curveTo(x_controle,y_controle,tempX2,tempY2);
 		}
-		
+ 
 		/**
 		  * Plots <code>tempEdge</code> as a linear edge with source node color.
 		  * 
@@ -534,21 +534,21 @@ package com.GEXFExplorer.y2009.visualization {
 		protected function plotLinearEdgeWithNodeColor(tempEdge:Edge):void {
 			var nodeTo:Node = globalGraph.getNode(tempEdge.idTargetAccess);
 			var nodeFrom:Node = globalGraph.getNode(tempEdge.idSourceAccess);
-			
+ 
 			var tempX1:Number = nodeFrom.x;
 			var tempY1:Number = nodeFrom.y;
 			var tempX2:Number = nodeTo.x;
 			var tempY2:Number = nodeTo.y;
-			
+ 
 			tempEdge.graphics.clear();
-			
+ 
 			tempEdge.graphics.lineStyle(edgesThickness,nodeFrom.colorUInt);
-				
+ 
 			tempEdge.graphics.moveTo(tempX1,tempY1);
 			tempEdge.graphics.lineTo(tempX2,tempY2);
-			
+ 
 		}
-		
+ 
 		/**
 		  * Plots <code>tempEdge</code> as a curved edge with source node color.
 		  * 
@@ -557,23 +557,23 @@ package com.GEXFExplorer.y2009.visualization {
 		protected function plotCurvedEdgeWithNodeColor(tempEdge:Edge):void {
 			var nodeTo:Node = globalGraph.getNode(tempEdge.idTargetAccess);
 			var nodeFrom:Node = globalGraph.getNode(tempEdge.idSourceAccess);
-			
+ 
 			var tempX2:Number = nodeFrom.x;
 			var tempY2:Number = nodeFrom.y;
 			var tempX1:Number = nodeTo.x;
 			var tempY1:Number = nodeTo.y;
-			
+ 
 			var x_controle:Number = (tempX1+tempX2)/2 - (tempY2-tempY1)/4;
 			var y_controle:Number = (tempY1+tempY2)/2 - (tempX1-tempX2)/4;
-			
+ 
 			tempEdge.graphics.clear();
-			
+ 
 			tempEdge.graphics.lineStyle(edgesThickness,nodeFrom.colorUInt);
-				
+ 
 			tempEdge.graphics.moveTo(tempX1,tempY1);
 			tempEdge.graphics.curveTo(x_controle,y_controle,tempX2,tempY2);
 		}
-		
+ 
 		/**
 		  * Plots <code>tempEdge</code> as a linear edge when source or target is selected with source node color.
 		  * 
@@ -582,21 +582,21 @@ package com.GEXFExplorer.y2009.visualization {
 		protected function plotLinearEdgeAsSelectedWithNodeColor(tempEdge:Edge):void {
 			var nodeTo:Node = globalGraph.getNode(tempEdge.idTargetAccess);
 			var nodeFrom:Node = globalGraph.getNode(tempEdge.idSourceAccess);
-			
+ 
 			var tempX1:Number = nodeFrom.x;
 			var tempY1:Number = nodeFrom.y;
 			var tempX2:Number = nodeTo.x;
 			var tempY2:Number = nodeTo.y;
-			
+ 
 			tempEdge.graphics.clear();
-			
+ 
 			tempEdge.graphics.lineStyle(edgesThickness*2.3,brightenColor(nodeFrom.colorUInt,70));
-				
+ 
 			tempEdge.graphics.moveTo(tempX1,tempY1);
 			tempEdge.graphics.lineTo(tempX2,tempY2);
-			
+ 
 		}
-		
+ 
 		/**
 		  * Plots <code>tempEdge</code> as a curved edge when source or target is selected with source node color.
 		  * 
@@ -605,23 +605,23 @@ package com.GEXFExplorer.y2009.visualization {
 		protected function plotCurvedEdgeAsSelectedWithNodeColor(tempEdge:Edge):void {
 			var nodeTo:Node = globalGraph.getNode(tempEdge.idTargetAccess);
 			var nodeFrom:Node = globalGraph.getNode(tempEdge.idSourceAccess);
-			
+ 
 			var tempX2:Number = nodeFrom.x;
 			var tempY2:Number = nodeFrom.y;
 			var tempX1:Number = nodeTo.x;
 			var tempY1:Number = nodeTo.y;
-			
+ 
 			var x_controle:Number = (tempX1+tempX2)/2 - (tempY2-tempY1)/4;
 			var y_controle:Number = (tempY1+tempY2)/2 - (tempX1-tempX2)/4;
-			
+ 
 			tempEdge.graphics.clear();
-			
+ 
 			tempEdge.graphics.lineStyle(edgesThickness*2.3,brightenColor(nodeFrom.colorUInt,70));
-			
+ 
 			tempEdge.graphics.moveTo(tempX1,tempY1);
 			tempEdge.graphics.curveTo(x_controle,y_controle,tempX2,tempY2);
 		}
-		
+ 
 		/**
 		  * Plots the hit area of <code>tempNode</code>.
 		  * 
@@ -629,18 +629,18 @@ package com.GEXFExplorer.y2009.visualization {
 		  */
 		protected function plotHitArea(tempNode:Node):void{
 			tempNode.circleHitArea.graphics.clear();
-			
+ 
 			tempNode.circleHitArea.x = tempNode.x;
 			tempNode.circleHitArea.y = tempNode.y;
 			tempNode.circleHitArea.graphics.beginFill(0xFFFFFF,0);
 			tempNode.circleHitArea.graphics.drawCircle(0,0,3*tempNode.diameter/10*tempNode.ratio);
 			tempNode.hitArea = tempNode.circleHitArea;
-			
+ 
 			tempNode.circleHitArea.mouseEnabled = true;
 			tempNode.circleHitArea.addEventListener(MouseEvent.MOUSE_OVER,tempNode.onMouseMoveOverNode);
 			tempNode.circleHitArea.addEventListener(MouseEvent.MOUSE_OUT,tempNode.onMouseMoveOutNode);
 		}
-		
+ 
 		/**
 		  * Moves the scene from the keyboard.
 		  * 
@@ -677,7 +677,7 @@ package com.GEXFExplorer.y2009.visualization {
 			}
 			//checkQuadtree();
 		}
-		
+ 
 		/**
 		  * Zooms in the direction of the mouse cursor.
 		  * 
@@ -703,11 +703,11 @@ package com.GEXFExplorer.y2009.visualization {
 					this.scaleX *= 5/6;
 					this.scaleY *= 5/6;
 				}
-			
+ 
 //				checkQuadtree();
 			}
 		}
-		
+ 
 		/**
 		  * Starts dragging the scene.
 		  * 
@@ -724,7 +724,7 @@ package com.GEXFExplorer.y2009.visualization {
 				this.startDrag();
 			}
 		}
-		
+ 
 		/**
 		  * Stops dragging the scene.
 		  * 
@@ -737,10 +737,10 @@ package com.GEXFExplorer.y2009.visualization {
 				this.addChild(hitAreasContainer);
 			}
 			this.stopDrag();
-			
+ 
 			//checkQuadtree();
 		}
-		
+ 
 		/**
 		  * Checks for each quad if it is out of the screen, or (totally or partially) in, to know if it has to be removed from the screen.
 		  * 
@@ -749,7 +749,7 @@ package com.GEXFExplorer.y2009.visualization {
 		  */
 		protected function checkQuadtree():void{
 			var tempQuad:Quad;
-			
+ 
 			for each(tempQuad in quadtree.getQuadsArray()){
 				if(quadtree.isOnScreen(tempQuad.positionAccess)){
 					addAllChild(tempQuad);
@@ -758,7 +758,7 @@ package com.GEXFExplorer.y2009.visualization {
 				}
 			}
 		}
-		
+ 
 		/**
 		  * Adds all elements in a quad from the graphic tree.
 		  * 
@@ -771,7 +771,7 @@ package com.GEXFExplorer.y2009.visualization {
 			textsContainer.addChild(quad.textsContainer);
 			hitAreasContainer.addChild(quad.hitAreasContainer);
 		}
-		
+ 
 		/**
 		  * Removes all elements in a quad from the graphic tree.
 		  * 
@@ -784,7 +784,7 @@ package com.GEXFExplorer.y2009.visualization {
 			if(textsContainer.contains(quad.textsContainer)) textsContainer.removeChild(quad.textsContainer);
 			if(hitAreasContainer.contains(quad.hitAreasContainer)) hitAreasContainer.removeChild(quad.hitAreasContainer);
 		}
-		
+ 
 		/**
 		  * Makes a uint color become brigther or darker, depending of the parameter.
 		  * If the <code>perc</code> parameter is above 50, it will brighten the color.
@@ -802,22 +802,22 @@ package com.GEXFExplorer.y2009.visualization {
 			var blueOffset:Number = color % 256;
 			var greenOffset:Number = ( color >> 8 ) % 256;
 			var redOffset:Number = ( color >> 16 ) % 256;
-			
+ 
 			if(perc > 50 && perc <= 100) {
 				factor = ( ( perc-50 ) / 50 );
-				
+ 
 				redOffset += ( 255 - redOffset ) * factor;
 				blueOffset += ( 255 - blueOffset ) * factor;
 				greenOffset += ( 255 - greenOffset ) * factor;
 			}
 			else if( perc < 50 && perc >= 0 ){
 				factor = ( ( 50 - perc ) / 50 );
-				
+ 
 				redOffset -= redOffset * factor;
 				blueOffset -= blueOffset * factor;
 				greenOffset -= greenOffset * factor;
 			}
-			
+ 
 			return (redOffset<<16|greenOffset<<8|blueOffset);
 		}
 	}
