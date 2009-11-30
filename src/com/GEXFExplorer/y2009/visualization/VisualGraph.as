@@ -98,7 +98,7 @@ package com.GEXFExplorer.y2009.visualization {
  
 			if(root.loaderInfo.parameters["clickableAttribute"]==undefined){clickableAttribute = null;}
 			else{
-				clickableAttribute = new String(root.loaderInfo.parameters["url"]);
+				clickableAttribute = new String(root.loaderInfo.parameters["clickableAttribute"]);
 				clickableNodes = false;
 			}
  
