@@ -83,6 +83,8 @@ package com.GEXFExplorer.y2009.data{
 			edgesListFrom = new Vector.<Edge>();
 			label = newLabel;
 			
+			url = '.';
+			
 			id = newId;
 			diameter = new Number();
 			ratio = newRatio;
@@ -403,6 +405,26 @@ package com.GEXFExplorer.y2009.data{
 				drawCircle(0,0,3.5*diameter/7.5*ratio);
 				beginFill(brightenColor(colorUInt,85),1);
 				drawCircle(0,0,2.75*diameter/7.5*ratio);
+			}
+			
+			if(stage.root.loaderInfo.parameters["nodeBorderColor"]!=undefined){
+				var tempColor:uint = new uint(stage.root.loaderInfo.parameters["nodeBorderColor"]);
+				with(this.graphics){
+					clear();
+					beginFill(brightenColor(colorUInt,85),1);
+					lineStyle(1,tempColor);
+					drawCircle(0,0,2.75*diameter/7.5*ratio);
+					endFill();
+				}
+			}else{
+				with(this.graphics){
+					clear();
+					beginFill(brightenColor(colorUInt,75),1);
+					drawCircle(0,0,diameter/1.5*ratio);
+					drawCircle(0,0,3.5*diameter/7.5*ratio);
+					beginFill(brightenColor(colorUInt,85),1);
+					drawCircle(0,0,2.75*diameter/7.5*ratio);
+				}
 			}
 			
 			Mouse.cursor = flash.ui.MouseCursor.BUTTON;
