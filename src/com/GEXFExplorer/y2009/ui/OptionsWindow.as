@@ -100,7 +100,7 @@ package com.GEXFExplorer.y2009.ui {
 			visualGraph = pGraph;
 			visualGraph.stage.addChild(this);
 			
-			attributesTest = (visualGraph.getGraph().isAttributeHashNull() || (root.loaderInfo.parameters["showAttributes"]=="false"));
+			attributesTest = (visualGraph.getGraph().isAttributeHashNull() || (root.loaderInfo.parameters["showAttributes"]!="true"));
 			
 			backGround = new Sprite();
 			addChild(backGround);
