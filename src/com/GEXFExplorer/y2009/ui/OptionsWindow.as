@@ -72,15 +72,18 @@ package com.GEXFExplorer.y2009.ui {
 	  */
 	public class OptionsWindow extends Sprite{
 		
-		private var nodesSizeSlider:Slider;
 		private var dataGrid:DataGrid;
 		
 		private var backGround:Sprite;
-		private var nodesSizeLabel:TextField;
+		private var nodesSizeSlider1:Slider;
+		private var nodesSizeLabel1:TextField;
+		private var nodesSizeSlider2:Slider;
+		private var nodesSizeLabel2:TextField;
 		private var zoomPlus:ZoomOut;
 		private var zoomMoins:ZoomIn;
 		private var windowed:Windowed;
 		private var fullscreen:Fullscreen;
+		private var windowedPalette:Sprite;
 		private var titleTextField:TextField;
 		private var diffX:Number;
 		private var diffY:Number;
@@ -105,8 +108,6 @@ package com.GEXFExplorer.y2009.ui {
 			backGround = new Sprite();
 			addChild(backGround);
 			with(backGround){
-				x = stage.stageWidth+10;
-				y = stage.stageHeight+10;
 				graphics.beginFill(0xDDDDDD,0.8);
 				if(attributesTest) graphics.drawRoundRect(0,0,104,169,10);
 				else graphics.drawRoundRect(0,0,174,239,10);
@@ -122,10 +123,18 @@ package com.GEXFExplorer.y2009.ui {
 				setTextFormat(tempTitleTextFormat);
 			}
 			
-			nodesSizeLabel = new TextField();
-			with(nodesSizeLabel){
+			nodesSizeLabel1 = new TextField();
+			with(nodesSizeLabel1){
 				x = 10;
 				y = 30;
+				text = "Nodes size";
+				selectable = false;
+				setTextFormat(tempTextFormat);
+				enable = true;
+			}
+			
+			nodesSizeLabel2 = new TextField();
+			with(nodesSizeLabel2){
 				text = "Nodes size";
 				selectable = false;
 				setTextFormat(tempTextFormat);
@@ -140,8 +149,18 @@ package com.GEXFExplorer.y2009.ui {
 			
 			tempMark *= 75;
 			
-			nodesSizeSlider = new Slider();
-			with(nodesSizeSlider){
+			nodesSizeSlider1 = new Slider();
+			with(nodesSizeSlider1){
+				move(10,50);
+				setSize(backGround.width-20,0);
+				minimum = 0;
+				maximum = Math.max(3*tempMark,300);
+				value = tempMark;
+				liveDragging = true;
+			}
+			
+			nodesSizeSlider2 = new Slider();
+			with(nodesSizeSlider2){
 				move(10,50);
 				setSize(backGround.width-20,0);
 				minimum = 0;
@@ -176,15 +195,21 @@ package com.GEXFExplorer.y2009.ui {
 
 			dataGrid = new DataGrid();
 			with(dataGrid){
-				move(10,nodesSizeSlider.y+20);
+				move(10,nodesSizeSlider1.y+20);
 				setSize(backGround.width-20,windowed.y-y-15);
 				columns = [ new DataGridColumn("Attribute"), new DataGridColumn("Value") ];
 			}
 			
+			windowedPalette = new Sprite();
+			with(windowedPalette){
+				graphics.beginFill(0xDDDDDD,0.8);
+				graphics.drawRoundRect(0,0,144,40,10);
+			}
+			
 			fullscreen = new Fullscreen();
 			with(fullscreen){
-				x = 0;
-				y = 0;
+				x = 8;
+				y = 8;
 				width = 24;
 				height = 24;
 			}
@@ -192,39 +217,53 @@ package com.GEXFExplorer.y2009.ui {
 			titleTextField.addEventListener(MouseEvent.CLICK,onClickTitle);
 			titleTextField.addEventListener(MouseEvent.MOUSE_OVER,onMouseOverTitle);
 			titleTextField.addEventListener(MouseEvent.MOUSE_OUT,onMouseOutTitle);
-			nodesSizeSlider.addEventListener(SliderEvent.CHANGE,nodesSizeEventListener);
+			nodesSizeSlider1.addEventListener(SliderEvent.CHANGE,nodesSizeEventListener);
+			nodesSizeSlider2.addEventListener(SliderEvent.CHANGE,nodesSizeEventListener);
 			zoomPlus.addEventListener(MouseEvent.MOUSE_DOWN,zoomPlusEventListener);
 			zoomMoins.addEventListener(MouseEvent.MOUSE_DOWN,zoomMoinsEventListener);
 			windowed.addEventListener(MouseEvent.CLICK,onClickFullScreen);
 			fullscreen.addEventListener(MouseEvent.CLICK,onClickFullScreen);
-			visualGraph.addEventListener(VisualGraph.SELECT,setDataGridContent);
+			if(!attributesTest) visualGraph.addEventListener(VisualGraph.SELECT,setDataGridContent);
 			stage.addEventListener(Event.RESIZE,whenChangeStageDisplayState);
 			
 			backGround.addChild(titleTextField);
-			backGround.addChild(nodesSizeLabel);
+			backGround.addChild(nodesSizeLabel1);
 			backGround.addChild(windowed);
 			backGround.addChild(zoomPlus);
 			backGround.addChild(zoomMoins);
-			backGround.addChild(nodesSizeSlider);
+			backGround.addChild(nodesSizeSlider1);
+			windowedPalette.addChild(fullscreen);
 			if(!attributesTest) backGround.addChild(dataGrid);
 			else dataGrid = null;
+			windowedPalette.addChild(nodesSizeLabel2);
+			windowedPalette.addChild(nodesSizeSlider2);
+			
+			nodesSizeSlider2.x = 40;
+			nodesSizeSlider2.y = 25;
+			nodesSizeLabel2.x = 40;
+			nodesSizeLabel2.y = 5;
+		
+			nodesSizeSlider1.x = 10;
+			nodesSizeSlider1.y = 50;
+			nodesSizeLabel1.x = 10;
+			nodesSizeLabel1.y = 30;
 			
 			if(root.loaderInfo.parameters["path"]==null){
-				fullscreen.x = stage.stageWidth-24;
-				fullscreen.y = stage.stageHeight-24;
-				backGround.x = stage.stageWidth-backGround.width;
+				windowedPalette.x = 0;
+				windowedPalette.y = stage.stageHeight-40;
+				backGround.x = 0;
 				backGround.y = stage.stageHeight-backGround.height;
 				
-				addChild(fullscreen);
-				removeChild(fullscreen);
+				addChild(windowedPalette);
+				removeChild(windowedPalette);
 				addChild(backGround);
 			}else{
-				fullscreen.x = stage.stageWidth-24;
-				fullscreen.y = stage.stageHeight-24;
-				backGround.x = stage.fullScreenWidth-backGround.width;
+				windowedPalette.x = 0;
+				windowedPalette.y = stage.stageHeight-40;
+				backGround.x = 0;
 				backGround.y = stage.fullScreenHeight-backGround.height;
-					
-				addChild(fullscreen);
+				
+				addChild(windowedPalette);
 				addChild(backGround);
 			}
 		}
@@ -236,6 +275,15 @@ package com.GEXFExplorer.y2009.ui {
 		  */
 		public function getBackground():Sprite{
 			return backGround;
+		}
+		
+		/**
+		  * Returns the little palette graphic element.
+		  * 
+		  * @return The little palette graphic element, <code>windowedPalette</code>.
+		  */
+		public function getWindowedPalette():Sprite{
+			return windowedPalette;
 		}
 		
 		/**
@@ -304,6 +352,9 @@ package com.GEXFExplorer.y2009.ui {
 		  */
 		protected function nodesSizeEventListener(evt:SliderEvent):void{
 			var thisNode:Node;
+			if(evt.target==nodesSizeSlider1) nodesSizeSlider2.value = evt.target.value;
+			if(evt.target==nodesSizeSlider2) nodesSizeSlider1.value = evt.target.value;
+			
 			
 			for each(thisNode in visualGraph.getNodes()){
 				visualGraph.actualizeSize(evt.target.value/10,thisNode,true);
@@ -326,8 +377,8 @@ package com.GEXFExplorer.y2009.ui {
 					visualGraph.scaleAndFixeGraph();
 					Mouse.cursor = flash.ui.MouseCursor.ARROW;
 					
-					if(contains(fullscreen)) removeChild(fullscreen);
-					backGround.x = stage.fullScreenWidth-backGround.width;
+					if(contains(windowedPalette)) removeChild(windowedPalette);
+					backGround.x = 0;
 					backGround.y = stage.fullScreenHeight-backGround.height;
                 }  
                 catch (e:SecurityError){ 
@@ -340,11 +391,11 @@ package com.GEXFExplorer.y2009.ui {
 				
 				backGround.x = stage.stageWidth+10;
 				backGround.y = stage.stageHeight+10;
-				addChild(fullscreen);
+			
+				addChild(windowedPalette);
 			}
 			
-			nodesSizeSlider.drawNow();
-			dataGrid.drawNow();
+			if(!attributesTest) dataGrid.drawNow();
 			
 		}
 		
@@ -363,7 +414,7 @@ package com.GEXFExplorer.y2009.ui {
 			backGround.x = stage.stageWidth+10;
 			backGround.y = stage.stageHeight+10;
 			
-			addChild(fullscreen);
+			addChild(windowedPalette);
 		}
 		
 		/**

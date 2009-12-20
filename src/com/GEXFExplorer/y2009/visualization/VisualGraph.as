@@ -713,9 +713,12 @@ package com.GEXFExplorer.y2009.visualization {
 		  * @param evt MouseEvent.MOUSE_DOWN
 		  */
 		protected function dragScene(evt:MouseEvent):void{
-			if((evt.stageY<optionsWindow.getBackground().y+optionsWindow.getBackground().height)&&(evt.stageY>optionsWindow.getBackground().y)
+			if(((evt.stageY<optionsWindow.getBackground().y+optionsWindow.getBackground().height)&&(evt.stageY>optionsWindow.getBackground().y)
 			   &&(evt.stageX<optionsWindow.getBackground().x+optionsWindow.getBackground().width)&&(evt.stageX>optionsWindow.getBackground().x)
-			   &&(optionsWindow.contains(optionsWindow.getBackground()))){
+			   &&(optionsWindow.contains(optionsWindow.getBackground())))
+			   ||((evt.stageY<optionsWindow.getWindowedPalette().y+optionsWindow.getWindowedPalette().height)&&(evt.stageY>optionsWindow.getWindowedPalette().y)
+			   &&(evt.stageX<optionsWindow.getWindowedPalette().x+optionsWindow.getWindowedPalette().width)&&(evt.stageX>optionsWindow.getWindowedPalette().x)
+			   &&(optionsWindow.contains(optionsWindow.getWindowedPalette())))){
 			}else{
 				if(this.contains(textsContainer)){
 					this.removeChild(textsContainer);

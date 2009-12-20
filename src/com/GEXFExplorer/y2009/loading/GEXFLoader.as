@@ -55,7 +55,7 @@ package com.GEXFExplorer.y2009.loading {
 		private var loader:URLLoader;
 		private var file:URLRequest;
 		private var backGround:Sprite;
-		private var progressBar:ProgressBar;
+//		private var progressBar:ProgressBar;
 		private var progressReport:TextField;
 		
 		private var testLoading:Boolean;
@@ -119,15 +119,15 @@ package com.GEXFExplorer.y2009.loading {
 			}
 			backGround.addChild(progressReport);
 			
-			progressBar = new ProgressBar();
-			with(progressBar){
-				x = 5;
-				y = 30;
-				width = s.stageWidth-10;
-				height = 20;
-				mode = ProgressBarMode.MANUAL;
-			}
-			backGround.addChild(progressBar);
+//			progressBar = new ProgressBar();
+//			with(progressBar){
+//				x = 5;
+//				y = 30;
+//				width = s.stageWidth-10;
+//				height = 20;
+//				mode = ProgressBarMode.MANUAL;
+//			}
+//			backGround.addChild(progressBar);
 			
 			loader.addEventListener(Event.COMPLETE, onLoadCompleteHandler);
 			
@@ -146,7 +146,7 @@ package com.GEXFExplorer.y2009.loading {
 			loader = null;
 			file = null;
 			backGround = null;
-			progressBar = null;
+//			progressBar = null;
 			progressReport = null;
 			adresse = null;
 			font = null;
@@ -160,9 +160,9 @@ package com.GEXFExplorer.y2009.loading {
 		  */
 		protected function loadingHandler(e:Event){
 			if(testLoading){
-				progressBar.setProgress(loader.bytesLoaded,loader.bytesTotal);
-				progressReport.text = Math.round(progressBar.percentComplete) + "% Loaded (file)";
-				progressReport.setTextFormat(new TextFormat("Verdana",25,0x000000,true));
+//				progressBar.setProgress(loader.bytesLoaded,loader.bytesTotal);
+//				progressReport.text = Math.round(progressBar.percentComplete) + "% Loaded (file)";
+//				progressReport.setTextFormat(new TextFormat("Verdana",25,0x000000,true));
 			}else{
 				progressReport.text = "Extracting datas from the file...";
 				progressReport.setTextFormat(new TextFormat("Verdana",25,0x000000,true));
