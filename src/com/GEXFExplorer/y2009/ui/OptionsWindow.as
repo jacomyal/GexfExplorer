@@ -157,6 +157,7 @@ package com.GEXFExplorer.y2009.ui {
 				maximum = Math.max(3*tempMark,300);
 				value = tempMark;
 				liveDragging = true;
+				focusEnabled = false;
 			}
 			
 			nodesSizeSlider2 = new Slider();
@@ -167,6 +168,7 @@ package com.GEXFExplorer.y2009.ui {
 				maximum = Math.max(3*tempMark,300);
 				value = tempMark;
 				liveDragging = true;
+				focusEnabled = false;
 			}
 			
 			zoomPlus = new ZoomOut();
@@ -354,7 +356,6 @@ package com.GEXFExplorer.y2009.ui {
 			var thisNode:Node;
 			if(evt.target==nodesSizeSlider1) nodesSizeSlider2.value = evt.target.value;
 			if(evt.target==nodesSizeSlider2) nodesSizeSlider1.value = evt.target.value;
-			
 			
 			for each(thisNode in visualGraph.getNodes()){
 				visualGraph.actualizeSize(evt.target.value/10,thisNode,true);
