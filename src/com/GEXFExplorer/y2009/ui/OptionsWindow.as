@@ -163,7 +163,7 @@ package com.GEXFExplorer.y2009.ui {
 			nodesSizeSlider2 = new Slider();
 			with(nodesSizeSlider2){
 				move(10,50);
-				setSize(backGround.width-20,0);
+				setSize(84,0);
 				minimum = 0;
 				maximum = Math.max(3*tempMark,300);
 				value = tempMark;

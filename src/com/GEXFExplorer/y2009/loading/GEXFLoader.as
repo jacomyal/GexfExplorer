@@ -71,6 +71,7 @@ package com.GEXFExplorer.y2009.loading {
 		private var adresse:String;
 		private var labelsColor:uint;
 		private var font:String;
+		private var fontSize:Number;
 		private var initialRatio:Number;
 		
 		/**
@@ -92,6 +93,11 @@ package com.GEXFExplorer.y2009.loading {
 			
 			if(s.root.loaderInfo.parameters["font"]==undefined){font = "Arial";}
 			else{font = s.root.loaderInfo.parameters["font"];}
+			
+			if(s.root.loaderInfo.parameters["labelSize"]==undefined){fontSize = 12;}
+			else{
+				fontSize = new Number(s.root.loaderInfo.parameters["labelSize"]);
+			}
 			
 			if(s.root.loaderInfo.parameters["initialNodesRatio"]==undefined){initialRatio = 1;}
 			else{
@@ -256,7 +262,7 @@ package com.GEXFExplorer.y2009.loading {
 					globalGraph.pushLabel(nodeXML.@label);
 					globalGraph.setIDConnection(nodeXML.@id,nodeCounter)
 					
-					tempNode = new Node(nodeCounter, nodeXML.@label, labelsColor, font, initialRatio);
+					tempNode = new Node(nodeCounter, nodeXML.@label, labelsColor, font, initialRatio, fontSize);
 					tempNode.x = nodeXML.children().normalize().@x*10;
 					tempNode.y = -1*nodeXML.children().normalize().@y*10;
 					tempNode.setDiameter(nodeXML.children().normalize().@value);

@@ -61,6 +61,7 @@ package com.GEXFExplorer.y2009.data{
 		private var edgesListTo:Vector.<Edge>;
 		private var edgesListFrom:Vector.<Edge>;
 		private var attributes:HashMap;
+		private var fontSize:Number
 		
 		/**
 		  * Initializes the node.
@@ -70,10 +71,11 @@ package com.GEXFExplorer.y2009.data{
 		  * @param newLabelColor Node label color
 		  * @param newFont Node label font
 		  */
-		public function Node(newId:Number, newLabel:String, newLabelColor:uint, newFont:String, newRatio:Number) {
+		public function Node(newId:Number, newLabel:String, newLabelColor:uint, newFont:String, newRatio:Number, newTextSize:Number) {
 			
 			font = newFont;
-			labelStyle = new TextFormat(font);
+			fontSize = newTextSize;
+			labelStyle = new TextFormat(font,newTextSize);
 			labelColorUInt = newLabelColor;
 			attributes = new HashMap();
 			
@@ -282,8 +284,8 @@ package com.GEXFExplorer.y2009.data{
 		  */
 		public function setTextStyle(scaledTextSize:Boolean=true):void{
 			var tempSize:Number;
-			if(!scaledTextSize) tempSize = 1;
-			else tempSize = 1*diameter/3;
+			if(!scaledTextSize) tempSize = fontSize/12;
+			else tempSize = fontSize/12*diameter/3;
  
 			labelStyle.size = tempSize*ratio;
 			labelText.setTextFormat(labelStyle);
