@@ -414,18 +414,13 @@ package com.GEXFExplorer.y2009.visualization {
  
 			var xSize:Number = xMax - xMin;
 			var ySize:Number = yMax - yMin;
+ 			
+			ratio = Math.min(stage.stageWidth/(xSize),stage.stageHeight/(ySize))*0.9;
  
-			if (xSize>ySize){
-				ratio = stage.stageWidth/(xSize);
-			}
-			else{
-				ratio = stage.stageHeight/(ySize);
-			}
- 
-			this.x = stage.stageWidth/2;
-			this.y = stage.stageHeight/2;
 			this.scaleX = ratio;
 			this.scaleY = ratio;
+			this.x = stage.stageWidth/2-xCenter*ratio;
+			this.y = stage.stageHeight/2-yCenter*ratio;
  
 			//checkQuadtree();
 		}

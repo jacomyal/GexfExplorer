@@ -5,27 +5,16 @@
   <boundTemplate>file:///C|/Documents and Settings/Jacko/Local Settings/Application Data/Adobe/Flash CS4/fr/Configuration/Project/templates/boundClass_as3.as</boundTemplate>
   <classTemplate>file:///C|/Documents and Settings/Jacko/Local Settings/Application Data/Adobe/Flash CS4/fr/Configuration/Project/templates/standardClass_as3.as</classTemplate>
   <classPath>.</classPath>
-  <defaultApp>file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/GEXFExplorer.fla</defaultApp>
-  <rootURI>file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/</rootURI>
+  <defaultApp>file:///D|/Text-Mining/dev/GEXFExplorer/src/GEXFExplorer.fla</defaultApp>
+  <rootURI>file:///D|/Text-Mining/dev/GEXFExplorer/src/</rootURI>
   <flexSDK/>
   <sources editable="false"/>
   <libraries editable="false"/>
   <externalLibraries editable="false"/>
   <compileList editable="false"/>
   <recentFiles editable="false">
-    <uri label="VisualGraph.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/visualization/VisualGraph.as</uri>
-    <uri label="GEXFLoader.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/loading/GEXFLoader.as</uri>
-    <uri label="Node.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Node.as</uri>
-    <uri label="OptionsWindow.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/OptionsWindow.as</uri>
-    <uri label="GEXFExplorer.fla">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/GEXFExplorer.fla</uri>
-    <uri label="Main.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/Main.as</uri>
-    <uri label="Graph.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Graph.as</uri>
-    <uri label="HashMap.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/HashMap.as</uri>
-    <uri label="Quadtree.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/visualization/Quadtree.as</uri>
-    <uri label="FPSCounter.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/ui/FPSCounter.as</uri>
-    <uri label="Edge.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Edge.as</uri>
-    <uri label="InputTextField.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/text/InputTextField.as</uri>
-    <uri label="Quad.as">file:///D|/Text-Mining (stage)/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/data/Quad.as</uri>
+    <uri label="GEXFExplorer.fla">file:///D|/Text-Mining/dev/GEXFExplorer/src/GEXFExplorer.fla</uri>
+    <uri label="VisualGraph.as">file:///D|/Text-Mining/dev/GEXFExplorer/src/com/GEXFExplorer/y2009/visualization/VisualGraph.as</uri>
   </recentFiles>
   <locations editable="false"/>
 </projectDescription>

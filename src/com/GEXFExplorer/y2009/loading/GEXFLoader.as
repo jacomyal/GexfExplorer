@@ -85,7 +85,7 @@ package com.GEXFExplorer.y2009.loading {
 			
 			globalGraph = gGraph;
 			
-			if(s.root.loaderInfo.parameters["path"]==undefined){adresse = "D:/Text-Mining (stage)/dev/GEXFExplorer (annexe)/cac-graphemix.gexf";}
+			if(s.root.loaderInfo.parameters["path"]==undefined){adresse = "D:/Text-Mining/dev/GEXFExplorer (annexe)/cac-graphemix.gexf";}
 			else{adresse = s.root.loaderInfo.parameters["path"];}
 			
 			if(s.root.loaderInfo.parameters["labelsColor"]==undefined){labelsColor = 0x000000;}
